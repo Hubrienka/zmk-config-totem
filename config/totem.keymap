@@ -72,7 +72,7 @@ label= "BASE"                              ;
 //             ┣━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━┫   ┣━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━┫
 //             ┃     N     ┃     S     ┃     H     ┃     T     ┃     M     ┃   ┃     Y     ┃     C     ┃     A     ┃     E     ┃     I     ┃
 // ┏━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━┫   ┣━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━┓
-// ┃ Esc/Shift ┃     X     ┃     V     ┃     J     ┃     D     ┃     Z     ┃   ┃     '     ┃     W     ┃     -     ┃     .     ┃     ,     ┃   Shift   ┃
+// ┃   Shift   ┃     X     ┃     V     ┃     J     ┃     D     ┃     Z     ┃   ┃     '     ┃     W     ┃     -     ┃     .     ┃     ,     ┃   Shift   ┃
 // ┗━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━┫   ┣━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━━┛
 //                                     ┃    Tab    ┃     R     ┃   Bspc    ┃   ┃   Enter   ┃   Space   ┃    Del    ┃
 //                                     ┗━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━━┛   ┗━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━━┛
@@ -81,7 +81,7 @@ label= "BASE"                              ;
 
                 &kp B       &kp F       &kp L       &kp K       &kp Q           &kp P       &kp G       &kp O       &kp U       &kp SEMI
                 &mt LGUI N  &mt LALT S  &mt LCTRL H &kp T       &kp M           &kp Y       &kp C       &mt RCTRL A &mt LALT E  &mt RGUI I
-    &mt LSFT ESC &kp X      &kp V       &kp J       &kp D       &kp Z           &kp SQT     &kp W       &kp MINUS   &kp DOT     &kp COMMA   &kp RSFT
+    &kp LSFT    &kp X       &kp V       &kp J       &kp D       &kp Z           &kp SQT     &kp W       &kp MINUS   &kp DOT     &kp COMMA   &kp RSFT
                                         &kp TAB     &lt NAV R   &kp BSPC        &kp RET     &lt SYM SPC &kp DEL
                         >;
                 };
