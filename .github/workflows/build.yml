@@ -1,5 +1,12 @@
-on: [push, pull_request, workflow_dispatch]
+name: Build firmware
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
 
 jobs:
   build:
     uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@main
+    with:
+      config_path: config
