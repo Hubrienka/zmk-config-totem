@@ -1,0 +1,11 @@
+/ {
+    combos {
+        compatible = "zmk,combos";
+        #binding-cells = <2>;
+
+        combo_test {
+            key-positions = < 0 1 >;        /* first two keys on the left */
+            bindings      = < &kp ESC 0 0 >;
+        };
+    };
+};
