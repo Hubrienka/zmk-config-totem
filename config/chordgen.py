@@ -1,173 +1,201 @@
 # chordgen.py
 """
-Generate a chord mapping (word → chord) from a word list.
+Generate a word‑→‑chord mapping for ZMK/QMK, but keep the entry‑count small by
+*not* emitting a chord for any word that can be typed with an existing stem
+plus one of the stock affix chords.
+
+The affix chords live in `special_entries` – add/remove there only.
 """
 
-import re
-import itertools
-import json
-from typing import List, Dict, Set
+import itertools, json, re
+from pathlib import Path
+from typing import Dict, List, Set
 
-# === SPECIAL MAPPINGS ===
+# ────────────────────────── 1. fixed chords (prefixes/suffixes etc.) ──────────
 special_entries = [
+    # editing helpers
     ("delete_word", ["[BSPC]", "H"]),
-    ("ing", ["I", "N", "G"]),
-    ("ed",  ["E", "D"]),
-    ("ly",  ["L", "Y"]),
-    ("ment", ["M", "E", "N", "T"]),
-    ("ship", ["S", "H", "I", "P"]),
-    ("ness", ["N", "E", "S", "S"]),
-    ("un", ["U", "N"]),
-    ("re", ["R", "E"]),
-    ("able", list("ABLE")),
-    ("al", list("AL")),
-    ("en", list("EN")),
-    ("er", list("ER")),
-    ("est", list("EST")),
-    ("ful", list("FUL")),
-    ("hood", list("HOOD")),
-    ("ion", list("ION")),
-    ("ity", list("ITY")),
-    ("ive", list("IVE")),
-    ("less", list("LESS")),
-    ("ous", list("OUS")),
-    ("es", list("ES")),
-    ("y", list("Y")),
-    ("ism", list("ISM")),
-    ("ist", list("IST")),
-    ("ty", list("TY")),
-    ("ry", list("RY")),
-    ("house", list("HOUSE")),
-    ("maker", list("MAKER")),
-    ("dom", list("DOM")),
-    ("ward", list("WARD")),
-    ("d", list("D"))
-]
-special_keys = {w for w,_ in special_entries}
 
-# === LAYOUT ===
-col_map = { 'B':1,'N':1,'X':1, 'F':2,'S':2,'V':2, 'L':3,'H':3,'J':3,
-            'K':4,'T':4,'D':4, 'Q':5,'M':5,'Z':5, 'P':6,'Y':6,
-            'G':7,'C':7,'W':7, 'O':8,'A':8, 'U':9,'E':9, 'I':10, 'R':11 }
+    # suffixes (★ add / change here only)
+    ("ing",  list("ING")),
+    ("ed",   list("ED")),
+    ("ly",   list("LY")),
+    ("ment", list("MENT")),
+    ("ness", list("NESS")),
+    ("ship", list("SHIP")),
+    ("able", list("ABLE")),
+    ("ion",  list("ION")),
+    ("ity",  list("ITY")),
+    ("ous",  list("OUS")),
+    ("est",  list("EST")),
+    ("ive",  list("IVE")),
+    ("less", list("LESS")),
+    ("y",    list("Y")),
+    ("s",    list("S")),
+
+    # prefixes
+    ("un",   list("UN")),
+    ("re",   list("RE")),
+    ("pre",  list("PRE")),
+    ("anti", list("ANTI")),
+]
+special_words = {w for w, _ in special_entries}
+
+prefixes   = [w for w, _ in special_entries if len(w) >= 2 and not w[-1].isalpha()]
+suffixes   = [w for w, _ in special_entries if w not in prefixes]
+
+# ────────────────────────── 2. physical layout constraints ────────────────────
+col_map = {  # column numbers on Totem (or Voyager) – adjust if yours differs
+    'B': 1, 'N': 1, 'X': 1,
+    'F': 2, 'S': 2, 'V': 2,
+    'L': 3, 'H': 3, 'J': 3,
+    'K': 4, 'T': 4, 'D': 4,
+    'Q': 5, 'M': 5, 'Z': 5,
+    'P': 6, 'Y': 6,
+    'G': 7, 'C': 7, 'W': 7,
+    'O': 8, 'A': 8,
+    'U': 9, 'E': 9,
+    'I': 10,
+    'R': 11,          # thumb
+}
 col_order = {
     1:["B","N","X"],2:["F","S","V"],3:["L","H","J"],
     4:["K","T","D"],5:["Q","M","Z"],6:["P","Y"],
     7:["G","C","W"],8:["O","A"],9:["U","E"],10:["I"],11:["R"]
 }
-left_set = set("BNXFSVLHJKTDQMZ")
-right_set = set("PYGCWOAUEI")
+left  = set("BNXFSVLHJKTDQMZ")
+right = set("PYGCWOAUEI")
 
+def same_hand(ch: str) -> bool:
+    keys = [c for c in ch if c in left or c in right]
+    return not keys or all(k in left for k in keys) or all(k in right for k in keys)
 
-def has_conflict(chord: str) -> bool:
+def conflict(ch: str) -> bool:
     groups = {}
-    for c in chord.upper():
+    for c in ch:
         if c not in col_map:
-            continue
-        col = col_map[c]
-        groups.setdefault(col, []).append(c)
-    for col, letters in groups.items():
-        if len(letters) > 1:
-            idx = [col_order[col].index(l) for l in letters]
+            return True
+        groups.setdefault(col_map[c], []).append(c)
+    for col, ks in groups.items():
+        if len(ks) > 1:
+            idx = [col_order[col].index(k) for k in ks]
             if max(idx) - min(idx) > 1:
                 return True
     return False
 
+def normalize(ch: str) -> str:
+    return "".join(sorted(ch))
 
-def is_same_hand(chord: str) -> bool:
-    letters = [c for c in chord.upper() if c in left_set or c in right_set]
-    return not letters or all(c in left_set for c in letters) or all(c in right_set for c in letters)
-
-
-def normalize(chord: str) -> str:
-    return "".join(sorted(chord.upper()))
-
-
-def get_short_candidates(word: str) -> List[str]:
-    unique = []
-    for c in word.upper():
-        if c in col_map and c not in unique:
-            unique.append(c)
-    if len(unique) < 2:
-        return []
-    perms = set(itertools.permutations(unique))
-    cands = []
-    for p in perms:
-        s = "".join(p)
-        if not has_conflict(s) and (not is_same_hand(s) or sum(1 for x in s if x != 'R') <= 4):
-            cands.append(s)
-    return cands
-
-
-def is_compound_word(word: str, mapping: Dict[str, str]) -> bool:
-    lw = word.lower()
-    if len(lw) < 7:
-        return False
-    for pre in ["anti","auto","post","pre","re"]:
-        if lw.startswith(pre) and lw[len(pre):] in mapping:
-            return True
-    for suf in ["ing","ed","ly","ion","ment"]:
-        if lw.endswith(suf) and lw[:-len(suf)] in mapping:
-            return True
-    return False
-
-
-def generate_chord(word: str, assigned: Set[str], reserved: Set[str]) -> str:
+# ────────────────────────── 3. chord generation helpers ───────────────────────
+def gen_candidates(word: str) -> List[str]:
     uniq = []
     for c in word.upper():
         if c in col_map and c not in uniq:
             uniq.append(c)
-    for L in (3, 4):
-        if L > len(uniq):
-            continue
+    length = len(uniq)
+    if length < 2:
+        return []
+    target_lengths = (
+        [length] if length <= 4 else
+        [3]       if length <= 6 else
+        [3, 4]
+    )
+    cand: List[str] = []
+    for L in target_lengths:
         for perm in itertools.permutations(uniq, L):
             s = "".join(perm)
-            if normalize(s) in assigned | reserved:
+            if conflict(s):
                 continue
-            if has_conflict(s):
+            if same_hand(s) and sum(1 for k in s if k != 'R') > 4:
                 continue
-            if is_same_hand(s) and sum(1 for x in s if x != 'R') > 4:
-                continue
-            return s
+            cand.append(s)
+    return cand
+
+# ────────────────────────── 4. word‑analysis helpers ──────────────────────────
+def split_affix(word: str) -> List[str] | None:
+    """Return [stem, affix] or [prefix, stem] if it *cleanly* splits, else None."""
+    lw = word.lower()
+    for suf in suffixes:
+        if lw.endswith(suf) and len(lw) > len(suf) + 2:
+            return [lw[:-len(suf)], suf]
+    for pre in prefixes:
+        if lw.startswith(pre) and len(lw) > len(pre) + 2:
+            return [pre, lw[len(pre):]]
     return None
 
+# false‑positive guard: stems shorter than 3 or containing digits, etc.
+def is_good_stem(stem: str) -> bool:
+    return len(stem) >= 3 and stem.isalpha()
 
-def build_mapping(words_file: str) -> Dict[str, str]:
-    with open(words_file) as f:
-        words = [w.strip() for w in f if w.strip()]
-    reserved = set()
+# ────────────────────────── 5. main build routine ─────────────────────────────
+def build_mapping(word_file: str) -> Dict[str, str]:
+    words = [w.strip() for w in Path(word_file).read_text().splitlines() if w.strip()]
+    mapping: Dict[str, str] = {}
+
+    # ❶ insert fixed chords first
+    taken: Set[str] = set()
+    for w, chord in special_entries:
+        chord_str = "".join(chord)
+        mapping[w] = chord_str
+        taken.add(normalize(chord_str))
+
+    # ❷ first pass – create chords for every *stem* (unique base word)
+    stems: Set[str] = set()
     for w in words:
-        if len(w) == 3:
-            cands = get_short_candidates(w)
-            if len(cands) == 1:
-                reserved.add(normalize(cands[0]))
-    mapping = {}
-    assigned = set()
-    for w, ch in special_entries:
-        s = "".join(ch)
-        mapping[w] = s
-        assigned.add(normalize(s))
-    for w in words:
-        if len(w) <= 1 or w in mapping or is_compound_word(w, mapping):
+        parts = split_affix(w)            # split if affix present
+        stem = parts[0] if parts else w
+        if not is_good_stem(stem):
             continue
-        if len(w) == 2:
-            f = "".join(c for c in w.upper() if c in col_map)
-            if len(f) >= 2:
-                mapping[w] = f
-                assigned.add(normalize(f))
-        else:
-            c = generate_chord(w, assigned, reserved)
-            if c:
-                mapping[w] = c
-                assigned.add(normalize(c))
+        stems.add(stem.lower())
+
+    # preserve frequency order
+    for w in words:
+        lw = w.lower()
+        if lw not in stems or lw in mapping:
+            continue
+        for cand in gen_candidates(lw):
+            if normalize(cand) not in taken:
+                mapping[lw] = cand
+                taken.add(normalize(cand))
+                break
+
+    # ❸ second pass – only keep whole words that *cannot* be typed as stem+affix
+    for w in words:
+        lw = w.lower()
+        if lw in mapping or lw in special_words:
+            continue
+        split = split_affix(lw)
+        if split and all(p in mapping for p in split):
+            # stem already has a chord, affix is special -> skip whole word
+            continue
+        # else allocate a chord for the full word
+        for cand in gen_candidates(lw):
+            if normalize(cand) not in taken:
+                mapping[lw] = cand
+                taken.add(normalize(cand))
+                break
+
     return mapping
 
+# ────────────────────────── 6. CLI ────────────────────────────────────────────
 if __name__ == "__main__":
-    import argparse
-    p = argparse.ArgumentParser()
-    p.add_argument("--words", default="5000-words.txt")
-    p.add_argument("--out", default="mapping.json")
-    args = p.parse_args()
+    import argparse, textwrap
+    ap = argparse.ArgumentParser(
+        description="Generate a compact mapping.json (stem+affix aware).",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=textwrap.dedent("""
+        The resulting mapping:
+          •  fixed affix chords from `special_entries`
+          •  one chord for each uncovered *stem*
+          •  a chord for a full word only when stem+affix does not exist
+        """)
+    )
+    ap.add_argument("--words", default="5000-words.txt")
+    ap.add_argument("--out",   default="mapping.json")
+    args = ap.parse_args()
+
     m = build_mapping(args.words)
-    with open(args.out, "w") as f:
-        json.dump(m, f, indent=2)
-    print(f"Saved mapping ({len(m)}) to {args.out}")
+    with open(args.out, "w", encoding="utf-8") as f:
+        json.dump(m, f, indent=2, sort_keys=True)
+
+    print(f"Saved mapping with {len(m):,} entries to {args.out}")

@@ -1,114 +1,73 @@
 #!/usr/bin/env python3
 """
-zmk_codegen.py
-==============
+Convert mapping.json (word → chord) into a pure‑combo ZMK overlay.
 
-Turn the JSON produced by **chordgen.py** into a ZMK Devicetree overlay that
-contains *only* the number of combos you can afford to keep in RAM.
-
-Usage examples
---------------
-
-# keep the 1 000 most‑frequent entries
-python zmk_codegen.py --map mapping.json --keymap totem.keymap \
-                      --limit 1000 --out combos.keymap
-
-# generate *every* entry (old behaviour)
-python zmk_codegen.py --map mapping.json --keymap totem.keymap \
-                      --limit 0    --out combos.keymap
+Usage:
+    python zmk_codegen.py --map mapping.json --keymap totem.keymap --out combos.keymap
 """
-from __future__ import annotations
-import argparse, json, re
-from pathlib import Path
-from typing   import Dict, List, Tuple
+import json, re, argparse
+from typing import Dict
 
-# ──────────────────────────────────────────────────────────────────────────────
-# helper ─ parse the physical key positions from your .keymap ─────────────────
-# ──────────────────────────────────────────────────────────────────────────────
-_BIND_RE = re.compile(r'&(kp|mt|lt)\s+(?:\S+\s+)?([A-Z])\b')
 
-def parse_key_positions(keymap_file: Path) -> Dict[str, int]:
-    text   = keymap_file.read_text(encoding="utf‑8")
-    blocks = re.findall(r'bindings\s*=\s*<([^>]+?)>;', text, re.DOTALL)
+def parse_key_positions(path: str) -> Dict[str, int]:
+    """
+    Scan every `bindings = < … > ;` block in your *.keymap file
+    and record the first (left→right, top→bottom) numeric position
+    of each printable letter A‑Z.
+    """
+    txt = open(path, encoding="utf-8").read()
+    blocks = re.findall(r'bindings\s*=\s*<([^>]+?)>;', txt, re.DOTALL)
     if not blocks:
-        raise RuntimeError(f"No `bindings = < … >;` blocks found in {keymap_file}")
+        raise RuntimeError("No `bindings = <…>` block found in " + path)
 
-    pos: Dict[str, int] = {}
-    next_index = 0
-    for block in blocks:                     # walk in file‑order → physical order
-        for _, letter in _BIND_RE.findall(block):
+    pat = re.compile(r'&(kp|mt|lt)\s+(?:\S+\s+)?([A-Z])\b')
+    pos, nxt = {}, 0
+    for blk in blocks:                # preserve physical order
+        for _, letter in pat.findall(blk):
             if letter not in pos:
-                pos[letter] = next_index
-                next_index += 1
+                pos[letter] = nxt
+                nxt += 1
     return pos
 
 
-# ──────────────────────────────────────────────────────────────────────────────
-# main ─ build the overlay ────────────────────────────────────────────────────
-# ──────────────────────────────────────────────────────────────────────────────
-def build_overlay(mapping: Dict[str, str],
-                  keypos: Dict[str, int],
-                  keep:   int) -> Tuple[List[str], List[str]]:
-    """Return (overlay_lines, skipped_words).  *keep*==0 → keep everything."""
-    overlay: List[str] = []
-    skipped: List[str] = []
-
-    overlay.extend([
-        "/ {",
-        "    combos {",
-        '        compatible = "zmk,combos";',
-        "        #binding-cells = <2>;\n",
-    ])
-
-    count = 0
-    for word, chord in mapping.items():
-        if keep and count >= keep:
-            break
-
-        # chord may be either "APB" or ["A","P","B"]; normalise to str
-        keys = chord.upper() if isinstance(chord, str) else "".join(chord).upper()
-
-        if not all(k in keypos for k in keys):
-            skipped.append(word)
-            continue
-
-        positions = " ".join(str(keypos[k]) for k in keys)
-        bindings  = " ".join(f"&kp {k}" for k in keys)
-
-        overlay.extend([
-            f"        combo_{word} {{",
-            f"            key-positions = <{positions}>;",
-            f"            bindings      = < {bindings} >;",
-            "        };",
-            ""
-        ])
-        count += 1
-
-    overlay.extend(["    };", "};", ""])
-    return overlay, skipped
-
-
 def main() -> None:
-    ap = argparse.ArgumentParser(
-        description="Generate a ZMK combo overlay from a mapping.json file")
-    ap.add_argument("--map",    default="mapping.json",
-                    help="JSON produced by chordgen.py (default: %(default)s)")
-    ap.add_argument("--keymap", default="totem.keymap",
-                    help=".keymap file that matches your physical board")
-    ap.add_argument("--limit",  type=int, default=1000,
-                    help="How many entries to keep (0 = all)  [default: %(default)s]")
-    ap.add_argument("--out",    default="combos.keymap",
-                    help="Output overlay filename  [default: %(default)s]")
+    ap = argparse.ArgumentParser(description="Generate combos overlay from mapping.json")
+    ap.add_argument("--map",    default="mapping.json")
+    ap.add_argument("--keymap", default="totem.keymap")
+    ap.add_argument("--out",    default="combos.keymap")
     args = ap.parse_args()
 
-    mapping  = json.load(open(args.map, encoding="utf‑8"))
-    keypos   = parse_key_positions(Path(args.keymap))
-    overlay, skipped = build_overlay(mapping, keypos, args.limit)
+    mapping  = json.load(open(args.map, encoding="utf-8"))
+    key_pos  = parse_key_positions(args.keymap)
 
-    Path(args.out).write_text("\n".join(overlay), encoding="utf‑8")
-    print(f"Wrote {len(overlay)-6} combos → {args.out}")  # -6: header/footer lines
-    if skipped:
-        print(f"Skipped {len(skipped)} words (keys not on board)")
+    # keep only chords that use letters present on the board
+    valid: Dict[str, str] = {}
+    for word, chord in mapping.items():
+        chord_str = chord if isinstance(chord, str) else "".join(chord)
+        chord_up  = chord_str.upper()
+        if all(c in key_pos for c in chord_up):
+            valid[word] = chord_up
+
+    with open(args.out, "w", encoding="utf-8") as f:
+        f.write(
+            "/ {\n"
+            "    combos {\n"
+            '        compatible = "zmk,combos";\n'
+            "        #binding-cells = <2>;\n\n"
+        )
+        for word, chord_up in valid.items():
+            positions = " ".join(str(key_pos[c]) for c in chord_up)
+            bindings  = " ".join(f"&kp {c}" for c in chord_up)
+            f.write(
+                f"        combo_{word} {{\n"
+                f"            key-positions = <{positions}>;\n"
+                f"            bindings      = < {bindings} >;\n"
+                f"        }};\n\n"
+            )
+        f.write("    };\n};\n")
+
+    print(f"Wrote {len(valid)} combos → {args.out}")
+
 
 if __name__ == "__main__":
     main()
