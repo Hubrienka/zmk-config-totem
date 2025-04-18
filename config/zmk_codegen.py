@@ -1,94 +1,78 @@
 #!/usr/bin/env python3
 import json, re, argparse
-from typing import Dict
+from typing import Dict, List
 
-def parse_key_positions(path: str) -> Dict[str, int]:
+def parse_key_positions(path: str) -> Dict[str,int]:
+    """Scan every bindings = <…>; block to assign 0‑based positions to each letter key."""
     txt = open(path, encoding="utf-8").read()
-    blocks = re.findall(r'bindings\s*=\s*<([^>]+?)>;', txt, flags=re.DOTALL)
-    if not blocks:
-        raise RuntimeError(f"No `bindings = < ... >;` blocks found in {path}")
-    pat = re.compile(r'&(kp|mt|lt)\s+(?:\S+\s+)?([A-Z])\b')
-    pos: Dict[str, int] = {}
-    nxt = 0
+    blocks = re.findall(r'bindings\s*=\s*<([^>]+?)>;', txt, re.DOTALL)
+    pat   = re.compile(r'&(kp|mt|lt)\s+(?:\S+\s+)?([A-Z])\b')
+    pos = {}
+    idx = 0
     for blk in blocks:
         for _, letter in pat.findall(blk):
             if letter not in pos:
-                pos[letter] = nxt
-                nxt += 1
+                pos[letter] = idx
+                idx += 1
     return pos
 
-def main() -> None:
+def main():
     p = argparse.ArgumentParser(
-        description="Generate a ZMK devicetree overlay with macros + combos"
+        description="Generate a minimal ZMK devicetree overlay with up to TOP combos by frequency."
     )
-    p.add_argument("--map",    default="mapping.json",
+    p.add_argument("--map",
+                   default="mapping.json",
                    help="Word→chord JSON (from chordgen.py)")
-    p.add_argument("--keymap", default="totem.keymap",
-                   help="Your Totem .keymap file")
-    p.add_argument("--words",  default="5000-words.txt",
+    p.add_argument("--words",
+                   default="5000-words.txt",
                    help="Frequency‑ordered word list")
-    p.add_argument("--out",    default="combos_and_macros.keymap",
+    p.add_argument("--keymap",
+                   default="totem.keymap",
+                   help="Your Totem .keymap devicetree file")
+    p.add_argument("--top",
+                   type=int,
+                   default=None,
+                   help="Keep only the first N entries from the frequency list")
+    p.add_argument("--out",
+                   default="combos.keymap",
                    help="Output overlay file")
-    p.add_argument("--top",    type=int, default=500,
-                   help="(default 500) keep only the first N entries by frequency")
     args = p.parse_args()
 
-    mapping = json.load(open(args.map,    encoding="utf-8"))
+    # load the chord mapping
+    mapping = json.load(open(args.map, encoding="utf-8"))
+    # load your frequency‑ordered list
+    freq_list = [w.strip() for w in open(args.words, encoding="utf-8") if w.strip()]
+    # discover key positions
     key_pos = parse_key_positions(args.keymap)
 
-    # preserve your frequency order
-    word_list = [
-        w.strip() for w in open(args.words, encoding="utf-8")
-        if w.strip()
-    ]
-
-    kept = []
-    for w in word_list:
+    kept = {}
+    for w in freq_list:
         if w not in mapping:
             continue
-        chord_raw = mapping[w]
-        chord_up = (
-            chord_raw.upper()
-            if isinstance(chord_raw, str)
-            else "".join(chord_raw).upper()
-        )
-        if all(c in key_pos for c in chord_up):
-            kept.append((w, chord_up))
-            if len(kept) >= args.top:
+        chord = mapping[w].upper() if isinstance(mapping[w], str) else "".join(mapping[w]).upper()
+        # only include combos for which all keys exist on your board
+        if all(c in key_pos for c in chord):
+            kept[w] = chord
+            if args.top and len(kept) >= args.top:
                 break
 
+    # write out the devicetree overlay
     with open(args.out, "w", encoding="utf-8") as f:
-        f.write("/ {\n")
-        # --- behaviors (macros) ---
-        f.write("    behaviors {\n")
-        f.write("        #binding-cells = <0>;\n\n")
-        for w, chord in kept:
-            m = f"macro_{w}"
-            f.write(f"        {m} {{\n")
-            f.write('            compatible = "zmk,behavior-macro";\n')
-            f.write("            #binding-cells = <0>;\n")
-            f.write("            bindings = <\n")
-            for c in chord:
-                f.write(f"                &kp {c}\n")
-            f.write("            >;\n")
-            f.write("        };\n\n")
-        f.write("    };\n\n")
-
-        # --- combos ---
-        f.write("    combos {\n")
+        f.write("/ {\n    combos {\n")
         f.write('        compatible = "zmk,combos";\n')
         f.write("        #binding-cells = <2>;\n\n")
-        for w, chord in kept:
-            cb = f"combo_{w}"
-            pos = " ".join(str(key_pos[c]) for c in chord)
-            f.write(f"        {cb} {{\n")
-            f.write(f"            key-positions = <{pos}>;\n")
-            f.write(f"            bindings      = < &macro_{w} >;\n")
+        for w, chord in kept.items():
+            # key‑positions = <i j k>;
+            positions = " ".join(str(key_pos[c]) for c in chord)
+            # bindings = < &kp A &kp B &kp C >;
+            binds = " ".join(f"&kp {c}" for c in chord)
+            f.write(f"        combo_{w} {{\n")
+            f.write(f"            key-positions = <{positions}>;\n")
+            f.write(f"            bindings      = < {binds} >;\n")
             f.write("        };\n\n")
-        f.write("    };\n")
-        f.write("};\n")
+        f.write("    };\n};\n")
 
-    print(f"Wrote {len(kept)} macros & combos → {args.out}")
+    print(f"Wrote {len(kept)} combos → {args.out}")
 
 if __name__ == "__main__":
     main()
