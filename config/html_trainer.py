@@ -6,10 +6,10 @@ import json
 import argparse
 
 special_keys = {
-    "delete_word","ing","ed","ly","ment","ship","ness","un","re",
-    "able","al","en","er","est","ful","hood","ion","ity","ive",
-    "less","ous","es","y","ism","ist","ty","ry","house","maker",
-    "dom","ward","d"
+    "delete_word",
+    "ing", "ed", "er", "ly", "ment", "ness", "ship",
+    "able", "ion", "ity", "ous", "est", "ive", "less",
+    "un", "re", "pre", "anti",
 }
 
 def main():
@@ -351,7 +351,7 @@ def main():
     const alphabeticalData = {json.dumps(alphabeticalData)};
     const frequencyData = {json.dumps(frequencyData)};
     const specialWords = {json.dumps(list(special_keys))};
-
+    
     const selectedWords = {{}};
     let currentSort = "frequency";
     let testStartTime = null;
