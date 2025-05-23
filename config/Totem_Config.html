@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Totem ZMK Visualizer & Editor (Layout v46 - Final Edit Styles V)</title> <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Tailwind CSS Configuration (Copied from user code)
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontSize: { // Needed to reference theme('fontSize.sm') in CSS
+                        'sm': '0.875rem',
+                     },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['monospace'], // Ensure monospace is defined
+                    },
+                    colors: {
+                        'key-bg-base': '#44403c', 'key-bg-kp': '#44403c',
+                        'key-bg-mt': '#581c87', 'key-bg-lt': '#14532d',
+                        'key-bg-mo': '#7c2d12', 'key-bg-bt': '#155e75',
+                        'key-bg-sys': '#881337', 'key-bg-out': '#5b21b6',
+                        'key-bg-macro': '#701a75','key-bg-trans': '#57534e',
+                        'key-bg-none': '#57534e', 'key-bg-mod': '#713f12',
+                        'key-text-base': '#d6d3d1', 'key-text-mt': '#e9d5ff',
+                        'key-text-lt': '#bbf7d0', 'key-text-mo': '#fde68a',
+                        'key-text-bt': '#a5f3fc', 'key-text-sys': '#fecaca',
+                        'key-text-out': '#ddd6fe', 'key-text-macro':'#f5d0fe',
+                        'key-text-trans': '#a8a29e','key-text-none': '#a8a29e',
+                        'key-text-mod': '#fef08a',
+                        // Added inactive colors - Matching body bg
+                        'inactive-input-bg': '#1c1917', // stone-900
+                        'inactive-input-text': '#78716c', // stone-500 (Keep for placeholder)
+                        'inactive-button-bg': '#1c1917', // stone-900
+                        'inactive-button-text': '#57534e', // stone-600 (Darker text for disabled button)
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base body styling */
+        body {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+        /* Key styling */
+        .key {
+            width: 80px; height: 80px;
+            padding: 4px;
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+            transition: all 0.15s ease-in-out;
+            display: flex; flex-direction: column; justify-content: center;
+            align-items: center; text-align: center; cursor: pointer;
+            overflow: hidden;
+            position: relative; /* Keep relative */
+            flex-shrink: 0; /* Prevent keys from shrinking */
+            border-color: transparent; /* Ensure no residual border color */
+        }
+        .key:hover {
+             filter: brightness(1.2);
+        }
+        .key.selected {
+             border: 1px solid #7dd3fc; /* Add border only when selected */
+             /* Use ring utilities for focus effect consistency */
+             outline: none;
+             box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.4); /* Tailwind blue-400 ring */
+             filter: brightness(1.4);
+             z-index: 10;
+        }
+
+        /* Font sizes - Increased */
+        .key-label { font-size: 0.8rem; font-weight: 500; line-height: 1.2; word-break: break-word; max-height: 3.6em; overflow: hidden; }
+        .key-binding { font-family: monospace; font-size: 0.65rem; margin-top: 2px; word-break: break-all; max-height: 2.4em; overflow: hidden; opacity: 0.8; }
+        .mod-label { font-weight: bold; }
+        textarea { font-family: monospace; }
+
+        /* Layout Adjustments */
+        .keyboard-container {
+            width: auto; /* Allow container to size based on content */
+            margin-top: 1.5rem; margin-bottom: 1.5rem;
+            background-color: #292524; /* stone-800 */
+            padding: 1.5rem; /* p-6 */
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1); /* shadow-lg */
+        }
+         .keyboard { /* This div wraps the two halves */
+            display: flex; /* Use flexbox to place halves side-by-side */
+            justify-content: center;
+            gap: 12rem; /* User adjusted gap */
+            width: auto; /* Allow container to size based on content */
+            padding-top: 3rem; /* Add padding to prevent clipping after rotation */
+            padding-bottom: 1rem; /* Reduced bottom padding */
+        }
+        .keyboard-half {
+            position: relative; /* Parent for absolute positioning of thumbs AND grouped shift */
+            display: grid;
+            grid-template-columns: repeat(6, 80px);
+            grid-auto-rows: min-content;
+            gap: 0.3rem; /* 5px gap */
+            height: calc(3 * 80px + 2 * 0.3rem + 180px); /* Increased height for thumb cluster */
+            width: calc(6 * 80px + 5 * 0.3rem);
+            align-items: start;
+            transition: transform 0.2s ease-in-out;
+        }
+        #left-half {
+            transform: rotate(6deg);
+        }
+        #right-half {
+             transform: rotate(-6deg);
+        }
+
+
+        /* Column Wrapper for staggering and tilting */
+        .column-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem; /* Match grid gap */
+            position: relative; /* Relative for absolute positioning of Shift inside */
+            width: 80px; /* Match key width */
+            transform-origin: bottom center;
+             grid-row: 1 / span 3;
+             /* Stagger and Rotation applied here */
+        }
+
+        /* --- Grid Positioning & Stagger/Tilt applied to WRAPPERS --- */
+        /* --- Left Half (Copied EXACTLY from User Input v19) --- */
+        .col-2-wrapper { grid-column: 2; transform: translateX(7px) translateY(80px) rotate(-6deg); } /* BNX + Shift */
+        .col-3-wrapper { grid-column: 3; transform: translateX(3px) translateY(40px) rotate(-3deg); } /* FSV */
+        .col-4-wrapper { grid-column: 4; } /* LHJ - Baseline */
+        .col-5-wrapper { grid-column: 5; transform: translateY(40px); } /* KTD - No tilt */
+        .col-6-wrapper { grid-column: 6; transform: translateY(60px); } /* QMZ - No tilt */
+
+        /* Position Shift key absolutely WITHIN its new parent wrapper (col-2) */
+        #key-10 {
+            position: absolute;
+            top: calc(125px + 0.3rem);
+            left: calc(-80px - 0.3rem);
+            z-index: 1;
+        }
+
+        /* Left Thumb Cluster (Copied EXACTLY from User Input v19) */
+        #key-16 { position: absolute; top: 320px; left: calc(4 * 80px + 3 * 0.3rem - 15px); transform: rotate(0deg); }
+        #key-17 { position: absolute; top: 328px; left: calc(5 * 80px + 4 * 0.3rem - 7px); transform: rotate(10deg); }
+        #key-18 { position: absolute; top: 353px; left: calc(6 * 80px + 5 * 0.3rem); transform: rotate(20deg); }
+
+
+        /* --- Right Half (Mirrored from Left Half) --- */
+        .col-7-wrapper  { grid-column: 1; transform: translateY(60px); } /* ;, I, , - No tilt */
+        .col-8-wrapper  { grid-column: 2; transform: translateY(40px); } /* U, E, . - No tilt */
+        .col-9-wrapper  { grid-column: 3; } /* O, A, - - Baseline */
+        .col-10-wrapper { grid-column: 4; transform: translateX(-3px) translateY(40px) rotate(3deg); } /* G, C, W */
+        .col-11-wrapper { grid-column: 5; transform: translateX(-7px) translateY(80px) rotate(6deg); } /* P, Y, ' + Shift */
+        /* Col 12 Wrapper is removed */
+
+         #key-34 {
+            position: absolute;
+            top: calc(125px + 0.3rem);
+            right: calc(-80px - 0.3rem);
+            z-index: 1;
+         }
+
+        /* Right Thumb Cluster (Mirrored from Left) */
+        #key-35 { position: absolute; top: 353px; right: calc(6 * 80px + 5 * 0.3rem); transform: rotate(-20deg); }
+        #key-36 { position: absolute; top: 328px; right: calc(5 * 80px + 4 * 0.3rem - 7px); transform: rotate(-10deg); }
+        #key-37 { position: absolute; top: 320px; right: calc(4 * 80px + 3 * 0.3rem - 15px); transform: rotate(0deg); }
+
+        /* Edit Area Styling */
+        #edit-area {
+             margin-top: 2.5rem; /* mt-10 */
+             margin-bottom: 1rem; /* mb-4 */
+             width: 100%; /* Take full width of container */
+        }
+        /* Style for the input placeholder */
+        #key-binding-input::placeholder {
+            color: theme('colors.inactive-input-text'); /* Use inactive color */
+            font-family: theme('fontFamily.sans'); /* Match button font */
+            font-style: italic;
+            text-align: center;
+            opacity: 0.8;
+            font-size: theme('fontSize.sm'); /* Match button font size */
+            font-weight: 500; /* Match button font weight */
+            line-height: normal; /* Adjust line height if needed */
+        }
+        #edit-controls {
+            width: 100%; /* Ensure controls take full width */
+            max-width: 42rem; /* max-w-xl */
+            margin-left: auto;
+            margin-right: auto;
+        }
+        /* Style for disabled button */
+        #update-key-btn:disabled {
+            background-color: theme('colors.inactive-button-bg');
+            color: theme('colors.inactive-button-text');
+            cursor: not-allowed;
+            opacity: 0.6; /* Slightly more faded */
+        }
+        /* Style for inactive input */
+        #key-binding-input:read-only {
+             background-color: theme('colors.inactive-input-bg');
+             border-color: theme('colors.inactive-input-bg'); /* Match background */
+             cursor: default;
+             text-align: center; /* Center placeholder text */
+        }
+        /* Remove focus styles when readonly */
+        #key-binding-input:read-only:focus {
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+            box-shadow: none;
+            border-color: theme('colors.inactive-input-bg');
+        }
+        /* Style for active input focus - Remove blue ring */
+        #key-binding-input:not(:read-only):focus {
+            border-color: theme('colors.stone.500'); /* Use a standard active border color */
+            outline: none; /* Remove default outline */
+            box-shadow: none; /* Remove custom shadow */
+            /* Optionally add Tailwind's default ring if needed, but removing for now */
+            /* ring: 2px; ring-offset-2 ring-indigo-500; */
+        }
+
+
+    </style>
+</head>
+<body class="bg-stone-900 text-stone-300">
+
+    <div class="container mx-auto max-w-fit w-full flex flex-col items-center gap-6 p-4">
+
+        <div class="text-center">
+             <h1 class="text-2xl md:text-3xl font-bold text-stone-100">Geist Totem ZMK Visualizer & Editor</h1>
+        </div>
+
+        <div class="controls w-full max-w-md flex flex-col sm:flex-row justify-center items-center gap-4 p-4 bg-stone-800 rounded-xl shadow"> <div class="flex items-center gap-2">
+                <label for="layer-select" class="text-sm font-medium text-stone-400">Layer:</label>
+                <select id="layer-select" class="rounded-lg border-stone-600 bg-stone-700 text-stone-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 pl-3 pr-8"></select> </div>
+            <button id="generate-btn" class="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-stone-800 focus:ring-indigo-500"> Generate .keymap Text
+            </button>
+        </div>
+
+        <div class="keyboard-container bg-stone-800 p-6 rounded-xl shadow-lg w-auto inline-block relative">
+             <div class="keyboard"> <div class="keyboard-half" id="left-half">
+                    <div class="column-wrapper col-2-wrapper">
+                        <div class="key" id="key-10"></div> <div class="key" id="key-0"></div> <div class="key" id="key-5"></div> <div class="key" id="key-11"></div>
+                    </div>
+                    <div class="column-wrapper col-3-wrapper">
+                         <div class="key" id="key-1"></div> <div class="key" id="key-6"></div> <div class="key" id="key-12"></div>
+                    </div>
+                    <div class="column-wrapper col-4-wrapper">
+                         <div class="key" id="key-2"></div> <div class="key" id="key-7"></div> <div class="key" id="key-13"></div>
+                    </div>
+                    <div class="column-wrapper col-5-wrapper">
+                         <div class="key" id="key-3"></div> <div class="key" id="key-8"></div> <div class="key" id="key-14"></div>
+                    </div>
+                    <div class="column-wrapper col-6-wrapper">
+                        <div class="key" id="key-4"></div> <div class="key" id="key-9"></div> <div class="key" id="key-15"></div>
+                    </div>
+                    <div class="key thumb" id="key-16"></div> <div class="key thumb" id="key-17"></div> <div class="key thumb" id="key-18"></div>
+                </div>
+
+                <div class="keyboard-half" id="right-half">
+                     <div class="column-wrapper col-7-wrapper">
+                        <div class="key" id="key-19"></div> <div class="key" id="key-24"></div> <div class="key" id="key-29"></div>
+                    </div>
+                     <div class="column-wrapper col-8-wrapper">
+                        <div class="key" id="key-20"></div> <div class="key" id="key-25"></div> <div class="key" id="key-30"></div>
+                    </div>
+                     <div class="column-wrapper col-9-wrapper">
+                         <div class="key" id="key-21"></div> <div class="key" id="key-26"></div> <div class="key" id="key-31"></div>
+                    </div>
+                     <div class="column-wrapper col-10-wrapper">
+                         <div class="key" id="key-22"></div> <div class="key" id="key-27"></div> <div class="key" id="key-32"></div>
+                    </div>
+                     <div class="column-wrapper col-11-wrapper">
+                         <div class="key" id="key-34"></div> <div class="key" id="key-23"></div> <div class="key" id="key-28"></div> <div class="key" id="key-33"></div>
+                    </div>
+                     <div class="key thumb" id="key-35"></div> <div class="key thumb" id="key-36"></div> <div class="key thumb" id="key-37"></div>
+                </div>
+            </div><div id="edit-area" class="w-full mt-10 mb-4"> <div id="edit-controls" class="max-w-xl mx-auto">
+                    <label id="edit-label" for="key-binding-input" class="block text-sm font-medium text-stone-300 mb-1" style="visibility: hidden;"> Edit Binding for Key <span id="selected-key-id" class="font-bold"></span> on Layer <span id="selected-layer-name" class="font-bold"></span>:
+                    </label>
+                    <input type="text" id="key-binding-input" class="block w-full rounded-lg border-stone-500 bg-stone-600 text-stone-100 shadow-sm focus:outline-none sm:text-sm font-mono p-2" placeholder="" readonly>
+                    <div class="mt-3 flex justify-center gap-3"> <button id="update-key-btn" class="px-3 py-1.5 bg-green-600 text-white text-sm font-medium rounded-lg shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-stone-800 focus:ring-green-500" disabled> Update Key
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div> <div id="output-area" class="w-full max-w-4xl mt-4 mb-4" style="display: none;">
+            <div class="bg-stone-800 p-4 rounded-xl shadow"> <h3 class="text-lg font-semibold text-stone-100 mb-2">Generated <code>totem.keymap</code> Content:</h3>
+                <p class="text-sm text-stone-400 mb-3">Copy this text and paste it into your ZMK config repository file (e.g., <code>config/totem.keymap</code>). Remember to handle includes, defines, combos, and macros separately if you modify them outside this tool.</p>
+                <textarea id="zmk-output" readonly class="w-full h-96 p-3 border border-stone-600 bg-stone-900 text-stone-300 rounded-lg shadow-sm text-xs focus:ring-indigo-500 focus:border-indigo-500"></textarea> </div>
+        </div>
+
+    </div> <script>
+        // --- DATA STRUCTURE ---
+        // (JavaScript data remains the same)
+        const zmkConfig = { definitions: [ { name: 'BASE', value: 0 }, { name: 'NAV', value: 1 }, { name: 'SYM', value: 2 }, { name: 'ADJ', value: 3 }, { name: 'TVP1', value: 4 }, { name: 'TVP2', value: 5 } ], behaviors: [ { type: '&mt', params: { 'quick-tap-ms': '<100>', 'global-quick-tap': '', 'flavor': '"tap-preferred"', 'tapping-term-ms': '<170>' } } ], combos: [ { name: 'combo_esc', params: { 'timeout-ms': '<50>', 'key-positions': '<0 1>', 'bindings': '<&kp ESC>' } }, { name: 'combo_tvp', params: { 'timeout-ms': '<100>', 'key-positions': '<11 12 13>', 'bindings': '<&tog TVP1>' } } ], macros: [ { name: 'gif', label: '"giphy"', bindings: [ '<&macro_press &kp LSHFT>', '<&macro_tap &kp N2>', '<&macro_release &kp LSHFT>', '<&macro_tap &kp G &kp I &kp F>' ] } ], keymap: { BASE: { label: "BASE", bindings: [ '&kp B', '&kp F', '&kp L', '&kp K', '&kp Q', '&mt LGUI N', '&mt LALT S', '&mt LCTRL H', '&kp T', '&kp M', '&kp LSFT', '&kp X', '&kp V', '&kp J', '&kp D', '&kp Z', '&kp TAB', '&lt NAV R', '&kp BSPC', '&kp P', '&kp G', '&kp O', '&kp U', '&kp SEMI', '&kp Y', '&kp C', '&mt RCTRL A', '&mt LALT E', '&mt RGUI I', '&kp SQT', '&kp W', '&kp MINUS', '&kp DOT', '&kp COMMA', '&kp RSFT', '&kp RET', '&lt SYM SPC', '&kp DEL' ] }, NAV: { label: "NAVI", bindings: [ '&kp ESC', '&bt BT_CLR', '&kp UP', '&kp EQUAL', '&kp LBRC', '&kp LSHFT', '&kp LEFT', '&kp DOWN', '&kp RIGHT', '&kp LBKT', '&trans', '&kp DEL', '&kp PG_UP', '&kp CAPS', '&kp PG_DN', '&kp LPAR', '&trans', '&trans', '&trans', '&kp RBRC', '&kp KP_N7', '&kp KP_N8', '&kp KP_N9', '&kp KP_PLUS', '&kp RBKT', '&kp KP_N4', '&kp KP_N5', '&kp KP_N6', '&kp KP_MINUS', '&kp RPAR', '&kp KP_N1', '&kp KP_N2', '&kp KP_N3', '&kp KP_MULTIPLY', '&trans', '&mo ADJ', '&kp KP_N0', '&trans' ] }, SYM: { label: "SYM", bindings: [ '&kp EXCL', '&kp AT', '&kp HASH', '&kp DLLR', '&kp PRCNT', '&kp RA(A)', '&trans', '&kp RA(S)', '&trans', '&trans', '&trans', '&kp RA(F18)', '&kp RA(F19)', '&trans', '&trans', '&trans', '&trans', '&gif', '&mo ADJ', '&kp CARET', '&kp AMPS', '&kp RA(U)', '&kp SQT', '&kp DQT', '&kp C_MUTE', '&kp LS(RA(N4))', '&kp RA(N5)', '&kp RA(N4)', '&kp RA(O)', '&kp C_VOL_DN', '&kp C_VOL_UP', '&kp C_PREV', '&kp C_NEXT', '&kp BSLH', '&trans', '&trans', '&kp C_PP', '&trans' ] }, ADJ: { label: "ADJ", bindings: [ '&sys_reset', '&bt BT_CLR', '&out OUT_TOG', '&trans', '&trans', '&bootloader', '&bt BT_NXT', '&trans', '&trans', '&trans', '&trans', '&trans', '&bt BT_PRV', '&trans', '&trans', '&trans', '&trans', '&trans', '&trans', '&trans', '&kp F7', '&kp F8', '&kp F9', '&kp F12', '&trans', '&kp F4', '&kp F5', '&kp F6', '&kp F11', '&trans', '&kp F1', '&kp F2', '&kp F3', '&kp F10', '&trans', '&trans', '&trans', '&trans' ] }, TVP1: { label: "TVP 1", bindings: [ '&kp TAB', '&kp I', '&kp LC(LALT)', '&kp O', '&kp LC(F20)', '&lt TVP2 L', '&kp LEFT', '&kp LALT', '&kp RIGHT', '&kp SPACE', '&kp J', '&kp LSHFT', '&kp LC(C)', '&kp BSPC', '&kp LC(V)', '&kp LC(F19)', '&trans', '&kp LC(F14)', '&kp LC(F13)', '&none', '&none', '&none', '&none', '&none', '&none', '&none', '&none', '&none', '&none', '&none', '&none', '&none', '&none', '&none', '&none', '&none', '&none', '&none' ] }, TVP2: { label: "TVP 2", bindings: [ '&kp LC(F18)', '&kp LS(I)', '&kp LS(HOME)', '&kp LS(O)', '&kp LS(F)', '&trans', '&kp LS(LEFT)', '&kp LC(F17)', '&kp LS(RIGHT)', '&kp RET', '&trans', '&kp J', '&kp LS(C)', '&kp LC(F16)', '&kp LS(V)', '&kp LC(F15)', '&trans', '&kp LC(F12)', '&kp LC(F11)', '&trans', '&kp F7', '&kp F8', '&kp F9', '&kp F12', '&trans', '&kp F4', '&kp F5', '&kp F6', '&kp F11', '&trans', '&kp F1', '&kp F2', '&kp F3', '&kp F10', '&trans', '&trans', '&trans', '&trans' ] } } };
+
+        // --- DOM Elements ---
+        const layerSelect = document.getElementById('layer-select');
+        const generateBtn = document.getElementById('generate-btn');
+        const outputArea = document.getElementById('output-area');
+        const zmkOutput = document.getElementById('zmk-output');
+        const editArea = document.getElementById('edit-area');
+        // const editPrompt = document.getElementById('edit-prompt'); // Removed prompt div
+        const editControls = document.getElementById('edit-controls');
+        const editInput = document.getElementById('key-binding-input');
+        const updateBtn = document.getElementById('update-key-btn');
+        const editLabel = document.getElementById('edit-label'); // Get the label
+        const selectedKeyLabel = document.getElementById('selected-key-id');
+        const selectedLayerNameLabel = document.getElementById('selected-layer-name');
+        const keyboardContainer = document.querySelector('.keyboard-container'); // Get keyboard container
+
+
+        let currentLayer = 'BASE';
+        let selectedKeyIndex = null;
+        let selectedKeyElement = null;
+
+        // --- Constants ---
+        const KEY_COUNT = 38;
+        const INACTIVE_PLACEHOLDER = "Click a key to edit its binding..."; // Define placeholder text
+
+        // --- Helper Function ---
+        /** Removes existing color classes */
+        function removeColorClasses(element) {
+            const prefixes = ['bg-', 'text-']; const classesToRemove = [];
+            element.classList.forEach(cls => { if (prefixes.some(prefix => cls.startsWith(prefix))) { const colorName = cls.substring(cls.indexOf('-') + 1); const definedColors = Object.keys(tailwind.config.theme.extend.colors); if (definedColors.includes(colorName) || cls.startsWith('text-stone-') || cls.startsWith('bg-stone-')) { classesToRemove.push(cls); } } });
+            if (classesToRemove.length > 0) { element.classList.remove(...classesToRemove); }
+        }
+
+        /** Formats binding and determines style classes */
+        function formatBindingInfo(binding) {
+             if (!binding || typeof binding !== 'string') { binding = '&none'; } binding = binding.trim();
+             let bgClass = 'bg-key-bg-base'; let textClass = 'text-key-text-base'; let modTextClass = 'text-key-text-mod';
+             let mainLabel = binding; let behavior = ''; let params = []; const match = binding.match(/^&(\w+)(?:\s+(.*))?$/);
+             if (match) {
+                 behavior = match[1].toLowerCase(); if (match[2]) { params = match[2].split(/\s+/); }
+                 if (['kp', 'key_press', 'ra', 'ls', 'lc'].includes(behavior)) { bgClass = 'bg-key-bg-kp'; textClass = 'text-key-text-base'; }
+                 else if (['mt', 'mod_tap'].includes(behavior)) { bgClass = 'bg-key-bg-mt'; textClass = 'text-key-text-mt'; }
+                 else if (['lt', 'layer_tap', 'tog'].includes(behavior)) { bgClass = 'bg-key-bg-lt'; textClass = 'text-key-text-lt'; }
+                 else if (['mo', 'momentary_layer'].includes(behavior)) { bgClass = 'bg-key-bg-mo'; textClass = 'text-key-text-mo'; }
+                 else if (['bt', 'bt_sel', 'bt_clr', 'bt_nxt', 'bt_prv'].includes(behavior)) { bgClass = 'bg-key-bg-bt'; textClass = 'text-key-text-bt'; }
+                 else if (['sys_reset', 'bootloader'].includes(behavior)) { bgClass = 'bg-key-bg-sys'; textClass = 'text-key-text-sys'; }
+                 else if (['out', 'out_tog', 'out_on', 'out_off'].includes(behavior)) { bgClass = 'bg-key-bg-out'; textClass = 'text-key-text-out'; }
+                 else if (['macro_press', 'macro_tap', 'macro_release', 'macro_pause_for_release', 'macro_wait_time', 'macro_meta_press', 'macro_meta_release'].includes(behavior) || zmkConfig.macros.some(m => m.name === behavior)) { bgClass = 'bg-key-bg-macro'; textClass = 'text-key-text-macro'; }
+                 else if (behavior === 'trans') { bgClass = 'bg-key-bg-trans'; textClass = 'text-key-text-trans'; }
+                 else if (behavior === 'none') { bgClass = 'bg-key-bg-none'; textClass = 'text-key-text-none'; }
+                 if (params.length > 0) {
+                     if (['mt', 'lt'].includes(behavior)) { mainLabel = `<span class="mod-label ${modTextClass}">${params[0]}</span> ${params[1]}`; }
+                     else if (behavior === 'kp' || behavior === 'key_press') { mainLabel = params[0]; } else if (behavior === 'ra') { mainLabel = `AltGr+${params[0]}`; } else if (behavior === 'ls') { mainLabel = `Shift+${params[0]}`; } else if (behavior === 'lc') { mainLabel = `Ctrl+${params[0]}`; } else if (behavior === 'mo' || behavior === 'tog') { mainLabel = params[0]; } else if (behavior === 'bt') { mainLabel = `${behavior.toUpperCase().replace('BT_','')} ${params[0] || ''}`.trim(); } else if (behavior === 'sys_reset') { mainLabel = 'RESET'; } else if (behavior === 'bootloader') { mainLabel = 'BOOT'; } else if (behavior === 'out') { mainLabel = `OUT ${params[0] || ''}`.trim(); } else if (zmkConfig.macros.some(m => m.name === behavior)) { mainLabel = behavior.toUpperCase(); }
+                 } else { if (behavior === 'trans') mainLabel = '▽'; else if (behavior === 'none') mainLabel = '○'; else mainLabel = behavior.toUpperCase(); }
+             } else { mainLabel = binding; }
+            mainLabel = mainLabel.replace(/KP_N(\d)/, '$1').replace(/KP_/, '').replace(/N(\d)/, '$1').replace(/L(ALT|CTRL|SHIFT|GUI)/, '$1').replace(/R(ALT|CTRL|SHIFT|GUI)/, '$1').replace(/LBRC/, '{').replace(/RBRC/, '}').replace(/LBKT/, '[').replace(/RBKT/, ']').replace(/LPAR/, '(').replace(/RPAR/, ')').replace(/BSPC/, 'Bksp').replace(/DEL/, 'Del').replace(/RET/, 'Enter').replace(/SPC/, 'Space').replace(/EQUAL/, '=').replace(/MINUS/, '-').replace(/PLUS/, '+').replace(/STAR|MULTIPLY/, '*').replace(/SQT/, "'").replace(/DQT/, '"').replace(/SEMI/, ';').replace(/COMMA/, ',').replace(/DOT/, '.').replace(/EXCL/, '!').replace(/AT/, '@').replace(/HASH/, '#').replace(/DLLR/, '$').replace(/PRCNT/, '%').replace(/CARET/, '^').replace(/AMPS/, '&').replace(/BSLH/, '\\').replace(/PG_UP/, 'PgUp').replace(/PG_DN/, 'PgDn').replace(/C_VOL_UP/, 'Vol+').replace(/C_VOL_DN/, 'Vol-').replace(/C_MUTE/, 'Mute').replace(/C_PP/, 'Play').replace(/C_PREV/, 'Prev').replace(/C_NEXT/, 'Next').replace(/CAPS/, 'Caps');
+            const htmlContent = `<div class="key-label ${textClass}">${mainLabel}</div><div class="key-binding ${textClass}">${binding}</div>`;
+            return { htmlContent, bgClass, textClass };
+        }
+
+        /** Updates the visual keyboard display */
+        function displayLayer(layerName) {
+            currentLayer = layerName; const layer = zmkConfig.keymap[layerName]; if (!layer) { console.error(`Layer "${layerName}" not found.`); return; } if (!layer.bindings || layer.bindings.length !== KEY_COUNT) { console.error(`Layer "${layerName}" has invalid bindings.`); return; } for (let i = 0; i < KEY_COUNT; i++) { const keyElement = document.getElementById(`key-${i}`); if (keyElement) { const binding = layer.bindings[i] || '&none'; const { htmlContent, bgClass, textClass } = formatBindingInfo(binding); keyElement.innerHTML = htmlContent; removeColorClasses(keyElement); keyElement.classList.add(bgClass); keyElement.dataset.keyIndex = i; } else { console.warn(`Key element "key-${i}" not found.`); } } deselectKey(); // Always deselect when changing layer
+        }
+
+        /** Populates the layer selector */
+        function populateLayerSelector() {
+            layerSelect.innerHTML = ''; for (const layerName in zmkConfig.keymap) { const option = document.createElement('option'); option.value = layerName; option.textContent = zmkConfig.keymap[layerName].label || layerName; layerSelect.appendChild(option); } layerSelect.value = currentLayer;
+        }
+
+        /** Generates the .keymap file content */
+        function generateKeymapText() {
+            let output = `/*\n * ZMK Keymap generated by Visualizer Tool\n * (Edit includes, defines, behaviors, combos, macros manually if needed)\n * SPDX-License-Identifier: MIT\n */\n\n#include <behaviors.dtsi>\n#include <dt-bindings/zmk/keys.h>\n#include <dt-bindings/zmk/bt.h>\n#include <dt-bindings/zmk/outputs.h>\n\n// --- Layer Definitions ---\n`; zmkConfig.definitions.forEach(def => { output += `#define ${def.name.padEnd(5)} ${def.value}\n`; }); output += `\n// --- Behavior Configuration --- \n`; zmkConfig.behaviors.forEach(bh => { output += `${bh.type} {\n`; for (const param in bh.params) { output += `    ${param}`; if (bh.params[param]) { output += ` = ${bh.params[param]}`; } output += `;\n`; } output += `};\n\n`; }); output += `/ {\n`; if (zmkConfig.combos && zmkConfig.combos.length > 0) { output += `    combos {\n        compatible = "zmk,combos";\n`; zmkConfig.combos.forEach(combo => { output += `        ${combo.name} {\n`; for (const param in combo.params) { output += `            ${param} = ${combo.params[param]};\n`; } output += `        };\n`; }); output += `    };\n\n`; } if (zmkConfig.macros && zmkConfig.macros.length > 0) { output += `    macros {\n`; zmkConfig.macros.forEach(macro => { output += `        ${macro.name}: ${macro.name} {\n            label = ${macro.label};\n            compatible = "zmk,behavior-macro";\n            #binding-cells = ;\n            bindings\n`; macro.bindings.forEach((binding, index) => { output += `                = ${binding}${index < macro.bindings.length - 1 ? ',' : ''}\n`; }); output += `                ;\n        };\n`; }); output += `    };\n\n`; } output += `    keymap {\n        compatible = "zmk,keymap";\n\n`; for (const layerName in zmkConfig.keymap) { const layer = zmkConfig.keymap[layerName]; const layerId = layerName.toLowerCase() + '_layer'; output += `        ${layerId} {\n            label = "${layer.label || layerName}";\n            bindings = <\n`; const bindings = layer.bindings; output += `                ${bindings.slice(0, 5).map(b => b.padEnd(12)).join(' ')}   ${bindings.slice(19, 24).map(b => b.padEnd(12)).join(' ')}\n`; output += `                ${bindings.slice(5, 10).map(b => b.padEnd(12)).join(' ')}   ${bindings.slice(24, 29).map(b => b.padEnd(12)).join(' ')}\n`; output += `        _         ${bindings.slice(10, 16).map(b => b.padEnd(12)).join(' ')} ${bindings.slice(29, 35).map(b => b.padEnd(12)).join(' ')}\n`; output += `                                    ${bindings.slice(16, 19).map(b => b.padEnd(12)).join(' ')}                ${bindings.slice(35, 38).map(b => b.padEnd(12)).join(' ')}\n`; output += `            >;\n        };\n\n`; } output += `    };\n};\n`; return output;
+        }
+
+        /** Handles key selection */
+        function selectKey(keyElement, keyIndex) {
+            // Deselect previous key
+            if (selectedKeyElement) { selectedKeyElement.classList.remove('selected'); }
+            // Select new key
+            if (keyIndex < 0 || !zmkConfig.keymap[currentLayer] || keyIndex >= zmkConfig.keymap[currentLayer].bindings.length) {
+                console.warn(`Invalid key index ${keyIndex} for layer ${currentLayer}`);
+                deselectKey(); // Call deselect if index is invalid
+                return;
+            }
+            selectedKeyElement = keyElement; selectedKeyIndex = keyIndex;
+            selectedKeyElement.classList.add('selected');
+            // Update and show edit controls
+            selectedKeyLabel.textContent = `${selectedKeyIndex}`;
+            selectedLayerNameLabel.textContent = zmkConfig.keymap[currentLayer].label || currentLayer;
+            editInput.value = zmkConfig.keymap[currentLayer].bindings[selectedKeyIndex] || '&none';
+            editInput.placeholder = ''; // Clear placeholder
+            editInput.readOnly = false; // Make editable
+            editLabel.style.visibility = 'visible'; // Show label
+            updateBtn.disabled = false; // Enable button
+            // Restore active styles
+            editInput.classList.remove('bg-inactive-input-bg', 'border-inactive-input-bg', 'cursor-default');
+            editInput.classList.add('bg-stone-600', 'border-stone-500'); // Active input styles
+            // Add focus styles back when active - Now matches key selection
+            editInput.classList.add('focus:border-cyan-300', 'focus:shadow-selected-input');
+            updateBtn.classList.remove('bg-inactive-button-bg', 'text-inactive-button-text', 'cursor-not-allowed', 'opacity-60');
+            updateBtn.classList.add('bg-green-600', 'text-white', 'hover:bg-green-700'); // Active button styles
+
+            editInput.focus(); editInput.select();
+            outputArea.style.display = 'none'; // Hide output area when editing
+        }
+
+        /** Deselects any key and shows prompt */
+        function deselectKey() {
+            if (selectedKeyElement) { selectedKeyElement.classList.remove('selected'); }
+            selectedKeyElement = null; selectedKeyIndex = null;
+            editLabel.style.visibility = 'hidden'; // Hide label
+            editInput.value = ''; // Clear input value
+            editInput.placeholder = INACTIVE_PLACEHOLDER; // Set placeholder
+            editInput.readOnly = true; // Make readonly
+            updateBtn.disabled = true; // Disable button
+            // Apply inactive styles
+            editInput.classList.remove('bg-stone-600', 'border-stone-500');
+            // Remove focus styles when inactive
+            editInput.classList.remove('focus:border-cyan-300', 'focus:shadow-selected-input');
+            editInput.classList.add('bg-inactive-input-bg', 'border-inactive-input-bg', 'cursor-default');
+            updateBtn.classList.remove('bg-green-600', 'text-white', 'hover:bg-green-700');
+            updateBtn.classList.add('bg-inactive-button-bg', 'text-inactive-button-text', 'cursor-not-allowed', 'opacity-60');
+        }
+
+        /** Updates the selected key's binding */
+        function updateKeyBinding() {
+            if (selectedKeyIndex !== null && currentLayer && zmkConfig.keymap[currentLayer]) { const newBinding = editInput.value.trim(); zmkConfig.keymap[currentLayer].bindings[selectedKeyIndex] = newBinding || '&none'; displayLayer(currentLayer); const keyElement = document.getElementById(`key-${selectedKeyIndex}`); if (keyElement) {
+                // Re-select after displayLayer potentially clears it (displayLayer calls deselectKey)
+                selectKey(keyElement, selectedKeyIndex); // Re-run select logic
+             } else { deselectKey(); } } else { console.error("Cannot update key."); deselectKey(); }
+        }
+
+        // --- Event Listeners ---
+        layerSelect.addEventListener('change', (e) => { displayLayer(e.target.value); });
+        generateBtn.addEventListener('click', () => { zmkOutput.value = generateKeymapText(); outputArea.style.display = 'block'; deselectKey(); outputArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); });
+        // Add click listeners to keys
+        for (let i = 0; i < KEY_COUNT; i++) {
+            const keyElement = document.getElementById(`key-${i}`);
+            if (keyElement) {
+                keyElement.addEventListener('click', (event) => {
+                    event.stopPropagation(); // Prevent click from bubbling up
+                    const keyIndex = parseInt(keyElement.dataset.keyIndex, 10);
+                    if (!isNaN(keyIndex)) {
+                        selectKey(keyElement, keyIndex);
+                    }
+                });
+            }
+        }
+        updateBtn.addEventListener('click', updateKeyBinding);
+        editInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); updateKeyBinding(); } });
+
+        // Add click listener to the main keyboard container for deselect
+        keyboardContainer.addEventListener('click', (event) => {
+            const clickedOnKey = event.target.closest('.key');
+            const clickedInEditControls = editControls.contains(event.target);
+
+             if (!clickedOnKey && !clickedInEditControls && (event.target === keyboardContainer || event.target === keyboardContainer.querySelector('.keyboard'))) {
+                 deselectKey();
+             }
+        });
+
+        // Keep body click listener for clicks outside everything
+        document.body.addEventListener('click', (event) => {
+            const clickedInsideKeyboardContainer = keyboardContainer.contains(event.target);
+            const clickedInsideControls = document.querySelector('.controls').contains(event.target);
+
+            if (!clickedInsideKeyboardContainer && !clickedInsideControls) {
+                deselectKey();
+            }
+        });
+
+
+        // --- Initialisation ---
+        populateLayerSelector();
+        displayLayer(currentLayer); // Initial display
+        deselectKey(); // Ensure edit area starts in prompt state
+
+    </script>
+
+</body>
+</html>
