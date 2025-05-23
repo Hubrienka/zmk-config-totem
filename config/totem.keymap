@@ -20,8 +20,6 @@
 #define NAV  1
 #define SYM  2
 #define ADJ  3
-#define TVP1 4
-#define TVP2 5
 
 &mt {
   quick-tap-ms = <100>;
@@ -76,8 +74,8 @@ label= "BASE"                              ;
 
                 &kp B       &kp L       &kp D       &kp W       &kp Z           &kp SQT     &kp F       &kp O       &kp U       &kp J
                 &kp N       &kp R       &kp T       &kp S       &kp G           &kp Y       &kp H       &kp A       &kp E       &kp I
-    &kp LCTL    &kp Q       &kp X       &kp M       &kp C       &kp V           &kp K       &kp P       &kp DOT     &kp MINUS   &kp COMMA   &kp SEMI
-                                        &kp TAB     &lt NAV BSPC &kp LSFT       &kp RET     &lt SYM SPC &kp DEL
+    &mt LCTL ESC &mt LALT Q &kp X       &kp M       &kp C       &kp V           &kp K       &kp P       &kp DOT     &kp MINUS   &kp COMMA   &kp SEMI
+                                        &kp TAB     &lt NAV BSPC &kp LSFT       &lt SYM RET &mt RALT SPC &kp DEL
                         >;
                 };
 
