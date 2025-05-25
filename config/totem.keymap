@@ -51,12 +51,13 @@
                 ;
         };
 		
-	    behaviors {
+    behaviors {
         repeat: repeat {
             compatible = "zmk,behavior-repeat-key";
             #binding-cells = <0>;
         };
     };
+};
 
         keymap {
                 compatible = "zmk,keymap";
