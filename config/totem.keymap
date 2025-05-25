@@ -50,12 +50,6 @@
                 , <&macro_tap &kp G &kp I &kp F>
                 ;
         };
-		
-    behaviors {
-        repeat: repeat {
-            compatible = "zmk,behavior-repeat-key";
-            #binding-cells = <0>;
-        };
     };
 };
 
