@@ -43,7 +43,7 @@
 			
 			combo_ctrl_bspc {
 				timeout-ms = <50>;
-				key-positions = <13 34>;
+				key-positions = <12 33>;
 				bindings = <&kp LC(BSPC)>;
 			};
 
