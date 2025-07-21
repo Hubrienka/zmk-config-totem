@@ -12,7 +12,7 @@
        
 
 #include <behaviors.dtsi>
-#include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/keys.hh>
 #include <dt-bindings/zmk/bt.h>
 #include <dt-bindings/zmk/outputs.h>
 
@@ -41,10 +41,16 @@
                 bindings = <&kp ESC>;
             };
 			
-			combo_ctrl_bspc {
+			combo_space {
 				timeout-ms = <50>;
-				key-positions = <12 33>;
-				bindings = <&kp LC(BSPC)>;
+				key-positions = <11 12 13>;
+				bindings = <&kp SPACE>;
+			};
+			
+			combo_enter {
+				timeout-ms = <50>;
+				key-positions = <10 11 12>;
+				bindings = <&kp RET>;
 			};
 
     };
@@ -86,7 +92,7 @@ label= "BASE"                              ;
                 &kp B       &kp L       &kp D       &kp W       &kp Z           &kp SQT     &kp F       &kp O       &kp U       &kp J
                 &kp N       &kp R       &kp T       &kp S       &kp G           &kp Y       &kp H       &kp A       &kp E       &kp I
     &mt LCTL DEL &mt LALT Q &kp X       &kp M       &kp C       &kp V           &kp K       &kp P       &kp DOT     &kp MINUS   &kp COMMA   &kp SEMI
-                                        &lt SYM TAB &lt NAV BSPC &kp LSFT       &key_repeat &mt RALT SPC &kp RET 
+                                        &lt SYM TAB &lt NAV BSPC &mt LSHFT LC(BSPC)       &key_repeat &mt RALT SPC &kp RET 
                         >;
                 };
 
@@ -102,7 +108,7 @@ label= "NAVI"                              ;
 //             ┣━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━┫   ┣━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━┫
 //             ┃     /     ┃    LEFT   ┃    DOWN   ┃   RIGHT   ┃    PgDn   ┃   ┃     <     ┃     4     ┃     5     ┃     6     ┃     -     ┃
 // ┏━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━┫   ┣━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━┓
-// ┃   PtScr   ┃     \     ┃     {     ┃     [     ┃     ]     ┃     }     ┃   ┃     >     ┃     1     ┃     2     ┃     3     ┃     *     ┃     .     ┃
+// ┃   PtScr   ┃     \     ┃     {     ┃     [     ┃     ]     ┃     }     ┃   ┃     >     ┃     1     ┃     2     ┃     3     ┃     * 	   ┃     .     ┃
 // ┗━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━┫   ┣━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━━┛
 //                                     ┃   Insert  ┃           ┃  Num Lock ┃   ┃     (     ┃     0     ┃     )     ┃
 //                                     ┗━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━━┛   ┗━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━━┛
@@ -111,7 +117,7 @@ label= "NAVI"                              ;
 
                 &kp PIPE    &kp HOME    &kp UP      &kp END     &kp PG_UP       &kp EQUAL   &kp KP_N7   &kp KP_N8   &kp KP_N9   &kp KP_PLUS
                 &kp FSLH    &kp LEFT    &kp DOWN    &kp RIGHT   &kp PG_DN       &kp EXCL    &kp KP_N4   &kp KP_N5   &kp KP_N6   &kp KP_MINUS
-    &kp PSCRN   &kp BSLH    &kp LBRC    &kp LBKT    &kp RBKT    &kp RBRC        &kp QMARK   &kp KP_N1   &kp KP_N2   &kp KP_N3   &kp KP_MULTIPLY &kp KP_DOT      
+    &mt LCTL PSCRN   &kp BSLH    &kp LBRC    &kp LBKT    &kp RBKT    &kp RBRC        &kp QMARK   &kp KP_N1   &kp KP_N2   &kp KP_N3   &kp KP_MULTIPLY &kp KP_DOT      
                                         &kp INS     &trans      &kp KP_NUM      &kp LPAR    &kp KP_N0   &kp RPAR       
                         >;
                 };
