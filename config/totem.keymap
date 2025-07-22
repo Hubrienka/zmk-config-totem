@@ -37,7 +37,7 @@
 		ralt_repeat: ralt_repeat {
 			compatible = "zmk,behavior-hold-tap";
 				#binding-cells = <0>;
-				bindings = <&kp RALT>, <&key_repeat>;
+				bindings = <&kp RALT &key_repeat>;
 			};
     };
 
