@@ -36,9 +36,9 @@
     behaviors {
 		ralt_repeat: ralt_repeat {
 			compatible = "zmk,behavior-hold-tap";
-				#binding-cells = <2>;
-				bindings = <&key_repeat>, <&kp RALT>;
-			};
+			#binding-cells = <1>;
+			bindings = <&kp>, <&key_repeat>;
+		};
     };
 
      combos {
@@ -100,7 +100,7 @@ label= "BASE"                              ;
                 &kp B       &kp L       &kp D       &kp W       &kp Z           &kp SQT     &kp F       &kp O       &kp U       &kp J
                 &kp N       &kp R       &kp T       &kp S       &kp G           &kp Y       &kp H       &kp A       &kp E       &kp I
     &mt LCTL DEL &mt LALT Q &kp X       &kp M       &kp C       &kp V           &kp K       &kp P       &kp DOT     &kp MINUS   &kp COMMA   &kp SEMI
-                                        &lt SYM TAB &lt NAV BSPC &mt LSHFT LC(BSPC)         &ralt_repeat &kp SPC     &kp RET 
+                                        &lt SYM TAB &lt NAV BSPC &mt LSHFT LC(BSPC)         &ralt_repeat RALT &kp SPC     &kp RET 
                         >;
                 };
 
