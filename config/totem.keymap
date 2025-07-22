@@ -21,14 +21,14 @@
 #define SYM  2
 
 &mt {
-  quick-tap-ms = <200>;
-  flavor = "tap-preferred";
+  quick-tap-ms = <180>;
+  flavor = "balanced";
   tapping-term-ms = <160>;
 };
 
 &lt {
-  quick-tap-ms = <200>;
-  flavor = "tap-preferred";
+  quick-tap-ms = <180>;
+  flavor = "balanced";
   tapping-term-ms = <160>;
 };
 
