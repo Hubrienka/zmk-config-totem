@@ -35,7 +35,7 @@
 / {
     behaviors {
 		ralt_repeat: ralt_repeat {
-			compatible = "zmk,behavior-hold-tap";
+			compatible = "zmk,behavior-balanced";
 			#binding-cells = <2>;
 			tapping-term-ms = <160>;
 			flavor = "hold-preferred";
