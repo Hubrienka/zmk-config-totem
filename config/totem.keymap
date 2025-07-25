@@ -34,15 +34,14 @@
 
 / {
     behaviors {
-		ralt_repeat: ralt_repeat {
+		shft_repeat: shft_repeat {
 			compatible = "zmk,behavior-hold-tap";
 			#binding-cells = <2>;
 			tapping-term-ms = <160>;
-			flavor = "tap-preferred";
+			flavor = "balanced";
 			bindings = <&kp>, <&key_repeat>;
 		};
 
-        // Custom mod-tap with tap-preferred flavor
         mt_tap_pref: mod_tap_tap_preferred {
             compatible = "zmk,behavior-hold-tap";
             #binding-cells = <2>;
@@ -109,10 +108,10 @@ label= "BASE"                              ;
  bindings = <
 // ╷           ╷           ╷           ╷           ╷           ╷           ╷   ╷           ╷           ╷           ╷           ╷           ╷           ╷
 
-                &kp B       &kp L       &kp D       &kp W       &kp Z           &kp SQT     &kp F       &kp O       &kp U       &kp J
-                &kp N       &kp R       &kp T       &kp S       &kp G           &kp Y       &kp H       &kp A       &kp E       &kp I
-    &mt LCTL DEL &mt_tap_pref LALT Q &kp X       &kp M       &kp C       &kp V           &kp K       &kp P       &kp DOT     &kp MINUS   &kp COMMA   &kp SEMI
-                                        &lt SYM TAB &lt NAV BSPC &mt LSHFT LC(BSPC)         &ralt_repeat RALT 0 &kp SPC     &kp RET 
+                  &kp B                &kp L        &kp D            &kp W        &kp Z                  &kp SQT      &kp F       &kp O       &kp U       &kp J
+                  &kp N                &kp R        &kp T            &kp S        &kp G                  &kp Y        &kp H       &kp A       &kp E       &kp I
+    &mt LCTL TAB  &mt_tap_pref LALT Q  &kp X        &kp M            &kp C        &kp V                  &kp K        &kp P       &kp DOT     &kp MINUS   &kp COMMA   &kp SEMI
+											        &lt SYM LC(BSPC) &lt NAV BSPC &shft_repeat LSHFT     &mt RALT DEL &kp SPC     &kp RET 
                         >;
                 };
 
