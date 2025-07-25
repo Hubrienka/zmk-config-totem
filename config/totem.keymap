@@ -28,14 +28,13 @@
 
 &lt {
   quick-tap-ms = <180>;
-  flavor = "balanced";
+  flavor = "tap-preferred";
   tapping-term-ms = <160>;
 };
 
 / {
     behaviors {
-        // Custom layer-tap: SYM on hold, Repeat on tap, with tap-preferred flavor.
-        lt_repeat_sym: layer_tap_repeat_sym {
+        lt_repeat: layer_tap_repeat {
             compatible = "zmk,behavior-hold-tap";
             #binding-cells = <2>;
             tapping-term-ms = <160>;
@@ -44,7 +43,6 @@
             bindings = <&mo>, <&key_repeat>;
         };
 
-        // Custom mod-tap with tap-preferred flavor for the Alt/Q key.
         mt_tap_pref: mod_tap_tap_preferred {
             compatible = "zmk,behavior-hold-tap";
             #binding-cells = <2>;
@@ -79,6 +77,7 @@
 
     macros {
         gif: gif {
+            label = "giphy";
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             bindings
@@ -96,6 +95,7 @@
 
                 base_layer {
 // ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+label= "BASE"                              ;
 // ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 //             ┏━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┓   ┏━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┓
 //             ┃     B     ┃     L     ┃     D     ┃     W     ┃     Z     ┃   ┃     '     ┃     F     ┃     O     ┃     U     ┃     J     ┃
@@ -104,15 +104,15 @@
 // ┏━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━┫   ┣━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━┓
 // ┃    Ctrl   ┃     Q     ┃     X     ┃     M     ┃     C     ┃     V     ┃   ┃     K     ┃     P     ┃     .     ┃     -     ┃     ,     ┃     ;     ┃
 // ┗━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━┫   ┣━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━━┛
-//                                     ┃    Repeat ┃    Bspc   ┃   Shift   ┃   ┃   Repeat  ┃   Space   ┃   Enter   ┃
+//                                     ┃ Bspc Word ┃   Repeat  ┃   Shift   ┃   ┃   Repeat  ┃   Space   ┃   Enter   ┃
 //                                     ┗━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━━┛   ┗━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━━┛
  bindings = <
 // ╷           ╷           ╷           ╷           ╷           ╷           ╷   ╷           ╷           ╷           ╷           ╷           ╷           ╷
 
-                  &kp B                &kp L        &kp D            &kp W        &kp Z                  &kp SQT      &kp F       &kp O       &kp U       &kp J
-                  &kp N                &kp R        &kp T            &kp S        &kp G                  &kp Y        &kp H       &kp A       &kp E       &kp I
-    &mt LCTL TAB  &mt_tap_pref LALT Q  &kp X        &kp M            &kp C        &kp V                  &kp K        &kp P       &kp DOT     &kp MINUS   &kp COMMA   &kp SEMI
-											        &lt_repeat_sym SYM 0 &lt NAV BSPC &mt LSHFT BSPC       &mt RALT DEL &kp SPC     &kp RET 
+                  &kp B                &kp L        &kp D          &kp W            &kp Z               &kp SQT      &kp F       &kp O       &kp U       &kp J
+                  &kp N                &kp R        &kp T          &kp S            &kp G               &kp Y        &kp H       &kp A       &kp E       &kp I
+    &mt LCTL TAB  &mt_tap_pref LALT Q  &kp X        &kp M          &kp C            &kp V               &kp K        &kp P       &kp DOT     &kp MINUS   &kp COMMA   &kp SEMI
+											        &lt SYM BSPC   &lt_repeat NAV 0 &mt LSHFT LC(BSPC)  &mt RALT DEL &kp SPC     &kp RET 
                         >;
                 };
 
@@ -121,6 +121,7 @@
 
                 nav_layer {
 // ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+label= "NAVI"                              ;
 // ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 //             ┏━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┓   ┏━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┓
 //             ┃     |     ┃    Home   ┃     UP    ┃    End    ┃    PgUp   ┃   ┃     =     ┃     7     ┃     8     ┃     9     ┃     +     ┃
@@ -146,6 +147,7 @@
 
                 sim_layer {
 // ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+label= "SYM"                               ;
 // ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 //             ┏━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┓   ┏━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┓
 //             ┃     `     ┃     @     ┃     #     ┃     $     ┃     %     ┃   ┃     ˆ     ┃     &     ┃     *     ┃     =     ┃     ~     ┃
