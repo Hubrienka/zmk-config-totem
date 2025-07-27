@@ -52,7 +52,7 @@
 			bindings = <&kp>, <&key_repeat>;
 		};
 
-        mt_tap: mod_tap_tap_preferred {
+        mt_tap: mod_tap_preferred {
             compatible = "zmk,behavior-hold-tap";
             #binding-cells = <2>;
             flavor = "tap-preferred";
@@ -124,7 +124,7 @@ label= "BASE"                              ;
 
                 nav_layer {
 // ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-label= "NAVI"                              ;
+label= "NAV"                               ;
 // ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 //             ┏━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┓   ┏━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┓
 //             ┃     |     ┃    Home   ┃     UP    ┃    End    ┃    PgUp   ┃   ┃     =     ┃     7     ┃     8     ┃     9     ┃     +     ┃
