@@ -66,9 +66,16 @@
             compatible = "zmk,combos";
             combo_semi {
                 timeout-ms = <50>;
-                key-positions = <18 19>;
+                key-positions = <19 37>;
                 bindings = <&kp SEMI>;
 			};
+			
+			combo_colon {
+                timeout-ms = <50>;
+                key-positions = <18 37>;
+                bindings = <&kp COLON>;
+			};
+			
 			
 			combo_enter {
 				timeout-ms = <50>;
