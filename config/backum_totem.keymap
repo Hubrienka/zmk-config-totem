@@ -60,53 +60,6 @@
             quick-tap-ms = <180>;
             bindings = <&kp>, <&kp>;
         };
-
-        magic1: magic1 {
-            compatible = "zmk,behavior-adaptive-key";
-            #binding-cells = <0>;
-            bindings = <&key_repeat>;
-
-            m1_k  { trigger-keys = <K>; max-prior-idle-ms = <350>; bindings = <&kp S>; };
-            m1_j  { trigger-keys = <J>; max-prior-idle-ms = <350>; bindings = <&kp M>; };
-            m1_r  { trigger-keys = <R>; max-prior-idle-ms = <350>; bindings = <&kp K>; };
-            m1_v  { trigger-keys = <V>; max-prior-idle-ms = <350>; bindings = <&kp K>; };
-            m1_u  { trigger-keys = <U>; max-prior-idle-ms = <350>; bindings = <&kp E>; };
-            m1_w  { trigger-keys = <W>; max-prior-idle-ms = <350>; bindings = <&kp D>; };
-            m1_l  { trigger-keys = <L>; max-prior-idle-ms = <350>; bindings = <&kp K>; };
-            m1_s  { trigger-keys = <S>; max-prior-idle-ms = <350>; bindings = <&kp K>; };
-            m1_c  { trigger-keys = <C>; max-prior-idle-ms = <350>; bindings = <&kp K>; };
-            m1_d  { trigger-keys = <D>; max-prior-idle-ms = <350>; bindings = <&kp Y>; };
-            m1_g  { trigger-keys = <G>; max-prior-idle-ms = <350>; bindings = <&kp Y>; };
-            m1_p  { trigger-keys = <P>; max-prior-idle-ms = <350>; bindings = <&kp Y>; };
-            m1_o  { trigger-keys = <O>; max-prior-idle-ms = <350>; bindings = <&kp A>; };
-            m1_a  { trigger-keys = <A>; max-prior-idle-ms = <350>; bindings = <&kp O>; };
-            m1_y  { trigger-keys = <Y>; max-prior-idle-ms = <350>; bindings = <&kp P>; };
-            m1_q  { trigger-keys = <Q>; max-prior-idle-ms = <350>; bindings = <&kp I>; };
-            m1_t  { trigger-keys = <T>; max-prior-idle-ms = <350>; bindings = <&kp V>; };
-            m1_e  { trigger-keys = <E>; max-prior-idle-ms = <350>; bindings = <&kp U>; };
-        };
-
-        magic2: magic2 {
-            compatible = "zmk,behavior-adaptive-key";
-            #binding-cells = <0>;
-            bindings = <&key_repeat>;
-
-            m2_r  { trigger-keys = <R>; max-prior-idle-ms = <350>; bindings = <&kp L>; };
-            m2_d  { trigger-keys = <D>; max-prior-idle-ms = <350>; bindings = <&kp G>; };
-            m2_t  { trigger-keys = <T>; max-prior-idle-ms = <350>; bindings = <&kp K>; };
-            m2_p  { trigger-keys = <P>; max-prior-idle-ms = <350>; bindings = <&kp D>; };
-            m2_c  { trigger-keys = <C>; max-prior-idle-ms = <350>; bindings = <&kp Y>; };
-            m2_l  { trigger-keys = <L>; max-prior-idle-ms = <350>; bindings = <&kp R>; };
-        };
-
-        lt_magic2: layer_tap_magic2 {
-            compatible = "zmk,behavior-hold-tap";
-            #binding-cells = <2>;
-            tapping-term-ms = <160>;
-            quick-tap-ms = <180>;
-            flavor = "tap-preferred";
-            bindings = <&mo>, <&magic2>;
-        };
     };
 
      combos {
@@ -153,10 +106,10 @@ label= "BASE"                              ;
 //                                     ┗━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━━┛   ┗━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━━┛
  bindings = <
 
-                  &kp V                &kp M           &kp L           &kp C            &kp P               &kp B              &magic1    &kp U              &kp O               &kp Q
+                  &kp V                &kp M           &kp L           &kp C            &kp P               &kp B              [&kp *MAGIC1*]    &kp U              &kp O               &kp Q
                   &kp S                &kp T           &kp R           &kp D            &kp Y               &kp F              &kp N             &kp E              &kp A               &kp I
     &mt LCTL TAB  &mt_tap LGUI X       &mt_tap LALT K  &mt_tap LCTL J  &mt_tap LSHFT G  &kp W               &kp Z              &mt_tap RSHFT H   &mt_tap RCTL COMMA &mt_tap LALT DOT    &mt_tap RGUI SQT   &mt_tap RCTL RET
-											           &lt SYM ESC     &lt NAV SPC      &lt FLIP BSPC       &mt RSHFT LC(BSPC) &mt_repeat RALT 0      &lt_magic2 FLIP 0 
+											           &lt SYM ESC     &lt NAV SPC      &lt FLIP BSPC       &mt RSHFT LC(BSPC) [&mt_repeat]      [&lt FLIP *MAGIC2*] 
                         >;
                 };
 
