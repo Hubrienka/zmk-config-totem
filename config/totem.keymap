@@ -113,16 +113,28 @@
             compatible = "zmk,combos";
             combo_semi {
                 timeout-ms = <50>;
-                key-positions = <18 37>;
+                key-positions = <18 36>;
                 bindings = <&kp SEMI>;
 			};
 			
 			combo_colon {
                 timeout-ms = <50>;
-                key-positions = <19 37>;
+                key-positions = <19 36>;
                 bindings = <&kp COLON>;
 			};
 			
+			combo_minus {
+                timeout-ms = <50>;
+                key-positions = <16 36>;
+                bindings = <&kp MINUS>;
+			};
+			
+			
+			combo_underscore {
+                timeout-ms = <50>;
+                key-positions = <15 36>;
+                bindings = <&kp UNDER>;
+			};
 			
 			combo_enter {
 				timeout-ms = <50>;
@@ -221,7 +233,7 @@ label= "FLIP"                              ;
 //             ┣━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━┫   ┣━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━┫
 //             ┃     I     ┃     A     ┃     E     ┃     N     ┃     F     ┃   ┃           ┃           ┃           ┃           ┃           ┃
 // ┏━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━┫   ┣━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━┓
-// ┃  Ctrl/Ret ┃     ,     ┃     -     ┃     .     ┃     P     ┃     K     ┃   ┃    Play   ┃    Vol-   ┃    Vol+   ┃    Prev   ┃    Next   ┃    Mute   ┃
+// ┃  Ctrl/Ret ┃     '     ┃     .     ┃     ,     ┃     H     ┃     Z     ┃   ┃    Play   ┃    Vol-   ┃    Vol+   ┃    Prev   ┃    Next   ┃    Mute   ┃
 // ┗━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━┫   ┣━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━━┛
 //                                     ┃           ┃           ┃           ┃   ┃           ┃           ┃           ┃
 //                                     ┗━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━━┛   ┗━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━━┛
