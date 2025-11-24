@@ -98,6 +98,7 @@
             m2_c  { trigger-keys = <C>; max-prior-idle-ms = <350>; bindings = <&kp Y>; };
             m2_l  { trigger-keys = <L>; max-prior-idle-ms = <350>; bindings = <&kp R>; };
 			m2_n  { trigger-keys = <N>; max-prior-idle-ms = <350>; bindings = <&kp F>; };
+			m2_f  { trigger-keys = <F>; max-prior-idle-ms = <350>; bindings = <&kp N>; };
         };
 
         lt_magic2: layer_tap_magic2 {
