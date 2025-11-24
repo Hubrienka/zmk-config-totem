@@ -140,7 +140,7 @@
 			
 			combo_enter {
 				timeout-ms = <30>;
-				key-positions = <10 11 12>;
+				key-positions = <11 12 13>;
 				bindings = <&kp RET>;
 			};
 
