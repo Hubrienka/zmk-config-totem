@@ -66,24 +66,24 @@
             #binding-cells = <0>;
             bindings = <&key_repeat>;
 
-            m1_k  { trigger-keys = <K>; max-prior-idle-ms = <350>; bindings = <&kp S>; };
-            m1_j  { trigger-keys = <J>; max-prior-idle-ms = <350>; bindings = <&kp M>; };
-            m1_r  { trigger-keys = <R>; max-prior-idle-ms = <350>; bindings = <&kp K>; };
-            m1_v  { trigger-keys = <V>; max-prior-idle-ms = <350>; bindings = <&kp K>; };
-            m1_u  { trigger-keys = <U>; max-prior-idle-ms = <350>; bindings = <&kp E>; };
-            m1_w  { trigger-keys = <W>; max-prior-idle-ms = <350>; bindings = <&kp D>; };
-            m1_l  { trigger-keys = <L>; max-prior-idle-ms = <350>; bindings = <&kp K>; };
-            m1_s  { trigger-keys = <S>; max-prior-idle-ms = <350>; bindings = <&kp K>; };
-            m1_c  { trigger-keys = <C>; max-prior-idle-ms = <350>; bindings = <&kp K>; };
-            m1_d  { trigger-keys = <D>; max-prior-idle-ms = <350>; bindings = <&kp Y>; };
-            m1_g  { trigger-keys = <G>; max-prior-idle-ms = <350>; bindings = <&kp Y>; };
-            m1_p  { trigger-keys = <P>; max-prior-idle-ms = <350>; bindings = <&kp Y>; };
-            m1_o  { trigger-keys = <O>; max-prior-idle-ms = <350>; bindings = <&kp A>; };
-            m1_a  { trigger-keys = <A>; max-prior-idle-ms = <350>; bindings = <&kp O>; };
-            m1_y  { trigger-keys = <Y>; max-prior-idle-ms = <350>; bindings = <&kp P>; };
-            m1_q  { trigger-keys = <Q>; max-prior-idle-ms = <350>; bindings = <&kp I>; };
-            m1_t  { trigger-keys = <T>; max-prior-idle-ms = <350>; bindings = <&kp V>; };
-            m1_e  { trigger-keys = <E>; max-prior-idle-ms = <350>; bindings = <&kp U>; };
+            m1_k  { trigger-keys = <K>; bindings = <&kp S>; };
+            m1_j  { trigger-keys = <J>; bindings = <&kp M>; };
+            m1_r  { trigger-keys = <R>; bindings = <&kp K>; };
+            m1_v  { trigger-keys = <V>; bindings = <&kp K>; };
+            m1_u  { trigger-keys = <U>; bindings = <&kp E>; };
+            m1_w  { trigger-keys = <W>; bindings = <&kp D>; };
+            m1_l  { trigger-keys = <L>; bindings = <&kp K>; };
+            m1_s  { trigger-keys = <S>; bindings = <&kp K>; };
+            m1_c  { trigger-keys = <C>; bindings = <&kp K>; };
+            m1_d  { trigger-keys = <D>; bindings = <&kp Y>; };
+            m1_g  { trigger-keys = <G>; bindings = <&kp Y>; };
+            m1_p  { trigger-keys = <P>; bindings = <&kp Y>; };
+            m1_o  { trigger-keys = <O>; bindings = <&kp A>; };
+            m1_a  { trigger-keys = <A>; bindings = <&kp O>; };
+            m1_y  { trigger-keys = <Y>; bindings = <&kp P>; };
+            m1_q  { trigger-keys = <Q>; bindings = <&kp I>; };
+            m1_t  { trigger-keys = <T>; bindings = <&kp V>; };
+            m1_e  { trigger-keys = <E>; bindings = <&kp U>; };
         };
 
         magic2: magic2 {
@@ -91,14 +91,14 @@
             #binding-cells = <0>;
             bindings = <&key_repeat>;
 
-            m2_r  { trigger-keys = <R>; max-prior-idle-ms = <350>; bindings = <&kp L>; };
-            m2_d  { trigger-keys = <D>; max-prior-idle-ms = <350>; bindings = <&kp G>; };
-            m2_t  { trigger-keys = <T>; max-prior-idle-ms = <350>; bindings = <&kp K>; };
-            m2_p  { trigger-keys = <P>; max-prior-idle-ms = <350>; bindings = <&kp D>; };
-            m2_c  { trigger-keys = <C>; max-prior-idle-ms = <350>; bindings = <&kp Y>; };
-            m2_l  { trigger-keys = <L>; max-prior-idle-ms = <350>; bindings = <&kp R>; };
-			m2_n  { trigger-keys = <N>; max-prior-idle-ms = <350>; bindings = <&kp F>; };
-			m2_f  { trigger-keys = <F>; max-prior-idle-ms = <350>; bindings = <&kp N>; };
+            m2_r  { trigger-keys = <R>; bindings = <&kp L>; };
+            m2_d  { trigger-keys = <D>; bindings = <&kp G>; };
+            m2_t  { trigger-keys = <T>; bindings = <&kp K>; };
+            m2_p  { trigger-keys = <P>; bindings = <&kp D>; };
+            m2_c  { trigger-keys = <C>; bindings = <&kp Y>; };
+            m2_l  { trigger-keys = <L>; bindings = <&kp R>; };
+			m2_n  { trigger-keys = <N>; bindings = <&kp F>; };
+			m2_f  { trigger-keys = <F>; bindings = <&kp N>; };
         };
 
         lt_magic2: layer_tap_magic2 {
@@ -114,32 +114,32 @@
      combos {
             compatible = "zmk,combos";
             combo_semi {
-                timeout-ms = <50>;
+                timeout-ms = <30>;
                 key-positions = <18 36>;
                 bindings = <&kp SEMI>;
 			};
 			
 			combo_colon {
-                timeout-ms = <50>;
+                timeout-ms = <30>;
                 key-positions = <19 36>;
                 bindings = <&kp COLON>;
 			};
 			
 			combo_minus {
-                timeout-ms = <50>;
+                timeout-ms = <30>;
                 key-positions = <16 36>;
                 bindings = <&kp MINUS>;
 			};
 			
 			
 			combo_underscore {
-                timeout-ms = <50>;
+                timeout-ms = <30>;
                 key-positions = <15 36>;
                 bindings = <&kp UNDER>;
 			};
 			
 			combo_enter {
-				timeout-ms = <50>;
+				timeout-ms = <30>;
 				key-positions = <10 11 12>;
 				bindings = <&kp RET>;
 			};
