@@ -99,7 +99,7 @@
             m2_l  { trigger-keys = <L>; bindings = <&kp R>; };
 			m2_n  { trigger-keys = <N>; bindings = <&kp F>; };
 			m2_f  { trigger-keys = <F>; bindings = <&kp N>; };
-			m2_f  { trigger-keys = <W>; bindings = <&kp Y>; };
+			m2_w  { trigger-keys = <W>; bindings = <&kp Y>; };
         };
 
         lt_magic2: layer_tap_magic2 {
