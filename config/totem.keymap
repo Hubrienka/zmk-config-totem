@@ -99,6 +99,7 @@
             m2_l  { trigger-keys = <L>; bindings = <&kp R>; };
 			m2_n  { trigger-keys = <N>; bindings = <&kp F>; };
 			m2_f  { trigger-keys = <F>; bindings = <&kp N>; };
+			m2_f  { trigger-keys = <W>; bindings = <&kp Y>; };
         };
 
         lt_magic2: layer_tap_magic2 {
@@ -143,6 +144,14 @@
 				key-positions = <11 12 13>;
 				bindings = <&kp RET>;
 			};
+			
+			combo_delete {
+				timeout-ms = <30>;
+				key-positions = <33 34>;
+				bindings = <&kp DEL>;
+			};
+			
+			
 
     };
 
