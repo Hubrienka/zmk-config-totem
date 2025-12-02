@@ -128,14 +128,14 @@
 			
 			combo_minus {
                 timeout-ms = <30>;
-                key-positions = <16 36>;
+                key-positions = <17 36>;
                 bindings = <&kp MINUS>;
 			};
 			
 			
 			combo_underscore {
                 timeout-ms = <30>;
-                key-positions = <15 36>;
+                key-positions = <16 36>;
                 bindings = <&kp UNDER>;
 			};
 			
