@@ -7,6 +7,7 @@
 //  - Esc combos and right-hand Enter combo removed
 //  - Left-hand Enter combo preserved
 //  - QMK adaptive Magic is emulated with sticky context layers and macros
+//  - Magic_1/Magic_2 now do nothing when no adaptive rule exists, instead of repeating
 //  - Exact QMK custom timing for DF_REPEAT / DF_BSPC cannot be 1:1 in keymap-only ZMK
 //
 
@@ -519,10 +520,10 @@
             label = "BASE";
             // Magic Sturdy core + extra pinky ESC/ENTER
             bindings = <
-                &m_v 0              &kp M               &m_l 0              &m_c 0              &m_p 0              &kp B               &key_repeat         &m_u 0              &m_o 0              &m_q 0
+                &m_v 0              &kp M               &m_l 0              &m_c 0              &m_p 0              &kp B               &none               &m_u 0              &m_o 0              &m_q 0
                 &hmt_s LGUI 0       &hmt_t LALT 0       &hmt_r LCTRL 0      &hmt_d LSHFT 0      &m_y 0              &m_f 0              &hmt_n RSHFT 0      &hmt_e RCTRL 0      &hmt_a LALT 0       &mt RGUI I
                 &kp ESC             &mt LSHFT X         &hmt_k LCTRL 0      &hmt_j LALT 0       &hmt_g LGUI 0       &m_w 0              &kp Z               &mt RGUI H          &mt LALT COMMA      &mt RCTRL DOT       &mt RSHFT SQT       &kp RET
-                &sym_cbspc SYM LC(BSPC)  &lt NAV SPACE       &lt FLIP TAB        &key_repeat         &bspc_rsft RSHFT BSPC  &ralt_rep RALT 0
+                &sym_cbspc SYM LC(BSPC)  &lt NAV SPACE       &lt FLIP TAB        &none               &bspc_rsft RSHFT BSPC  &ralt_rep RALT 0
             >;
         };
 
@@ -548,9 +549,9 @@
 
         flip_layer {
             label = "FLIP";
-            // Mostly copied from Cheapino FLIP; adaptive Magic at this left-hand position falls back to repeat in keymap-only ZMK
+            // Mostly copied from Cheapino FLIP; adaptive Magic at this left-hand position does nothing unless context layer maps it
             bindings = <
-                &m_q 0              &m_o 0              &m_u 0              &key_repeat         &kp B               &kp INS             &kp CAPS            &kp KP_NUM          &kp SLCK            &kp PAUSE_BREAK
+                &m_q 0              &m_o 0              &m_u 0              &none               &kp B               &kp INS             &kp CAPS            &kp KP_NUM          &kp SLCK            &kp PAUSE_BREAK
                 &mt RGUI I          &hmt_a LALT 0       &hmt_e RCTRL 0      &hmt_n RSHFT 0      &m_f 0              &trans              &trans              &trans              &trans              &trans
                 &trans              &mt RSHFT SQT       &mt RCTRL DOT       &mt LALT COMMA      &mt RGUI H          &kp Z               &trans              &trans              &trans              &trans              &trans              &trans
                 &trans              &trans              &trans              &trans              &trans              &trans
@@ -635,9 +636,9 @@
 
         magic_f_layer {
             label = "MG_F";
-            // After F: Magic_1 -> repeat, Magic_2 -> N
+            // After F: Magic_1 -> nothing, Magic_2 -> N
             bindings = <
-                &trans              &trans              &trans              &trans              &trans              &trans              &key_repeat         &trans              &trans              &trans
+                &trans              &trans              &trans              &trans              &trans              &trans              &none               &trans              &trans              &trans
                 &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans
                 &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans
                 &trans              &trans              &trans              &m_n 0              &trans              &trans
@@ -657,23 +658,23 @@
 
         magic_j_layer {
             label = "MG_J";
-            // After J: Magic_1 -> M, Magic_2 -> repeat
+            // After J: Magic_1 -> M, Magic_2 -> nothing
             bindings = <
                 &trans              &trans              &trans              &trans              &trans              &trans              &kp M               &trans              &trans              &trans
                 &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans
                 &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans
-                &trans              &trans              &trans              &key_repeat         &trans              &trans
+                &trans              &trans              &trans              &none               &trans              &trans
             >;
         };
 
         magic_k_layer {
             label = "MG_K";
-            // After K: Magic_1 -> S, Magic_2 -> repeat
+            // After K: Magic_1 -> S, Magic_2 -> nothing
             bindings = <
                 &trans              &trans              &trans              &trans              &trans              &trans              &m_s 0              &trans              &trans              &trans
                 &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans
                 &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans
-                &trans              &trans              &trans              &key_repeat         &trans              &trans
+                &trans              &trans              &trans              &none               &trans              &trans
             >;
         };
 
@@ -690,9 +691,9 @@
 
         magic_n_layer {
             label = "MG_N";
-            // After N: Magic_1 -> repeat, Magic_2 -> F
+            // After N: Magic_1 -> nothing, Magic_2 -> F
             bindings = <
-                &trans              &trans              &trans              &trans              &trans              &trans              &key_repeat         &trans              &trans              &trans
+                &trans              &trans              &trans              &trans              &trans              &trans              &none               &trans              &trans              &trans
                 &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans
                 &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans
                 &trans              &trans              &trans              &m_f 0              &trans              &trans
@@ -723,12 +724,12 @@
 
         magic_q_layer {
             label = "MG_Q";
-            // After Q: Magic_1 -> I, Magic_2 -> repeat
+            // After Q: Magic_1 -> I, Magic_2 -> nothing
             bindings = <
                 &trans              &trans              &trans              &trans              &trans              &trans              &kp I               &trans              &trans              &trans
                 &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans
                 &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans
-                &trans              &trans              &trans              &key_repeat         &trans              &trans
+                &trans              &trans              &trans              &none               &trans              &trans
             >;
         };
 
@@ -745,12 +746,12 @@
 
         magic_s_layer {
             label = "MG_S";
-            // After S: Magic_1 -> K, Magic_2 -> repeat
+            // After S: Magic_1 -> K, Magic_2 -> nothing
             bindings = <
                 &trans              &trans              &trans              &trans              &trans              &trans              &m_k 0              &trans              &trans              &trans
                 &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans
                 &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans
-                &trans              &trans              &trans              &key_repeat         &trans              &trans
+                &trans              &trans              &trans              &none               &trans              &trans
             >;
         };
 
@@ -778,12 +779,12 @@
 
         magic_v_layer {
             label = "MG_V";
-            // After V: Magic_1 -> K, Magic_2 -> repeat
+            // After V: Magic_1 -> K, Magic_2 -> nothing
             bindings = <
                 &trans              &trans              &trans              &trans              &trans              &trans              &m_k 0              &trans              &trans              &trans
                 &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans
                 &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans
-                &trans              &trans              &trans              &key_repeat         &trans              &trans
+                &trans              &trans              &trans              &none               &trans              &trans
             >;
         };
 
@@ -800,12 +801,12 @@
 
         magic_y_layer {
             label = "MG_Y";
-            // After Y: Magic_1 -> P, Magic_2 -> repeat
+            // After Y: Magic_1 -> P, Magic_2 -> nothing
             bindings = <
                 &trans              &trans              &trans              &trans              &trans              &trans              &m_p 0              &trans              &trans              &trans
                 &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans
                 &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans              &trans
-                &trans              &trans              &trans              &key_repeat         &trans              &trans
+                &trans              &trans              &trans              &none               &trans              &trans
             >;
         };
 
