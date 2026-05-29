@@ -9,6 +9,8 @@
 //  - QMK adaptive Magic is emulated with sticky context layers and macros
 //  - Magic_1/Magic_2 now do nothing when no adaptive rule exists, instead of repeating
 //  - Home-row mod-taps use require-prior-idle-ms to reduce Magic/context delay while typing
+//  - v7: custom mod-tap tap sides now press until release, enabling tap-then-hold repeat
+//  - v7: removed global-quick-tap from the stock &mt to reduce accidental stuck repeats
 //  - Exact QMK custom timing for DF_REPEAT / DF_BSPC cannot be 1:1 in keymap-only ZMK
 //
 
@@ -47,7 +49,6 @@
 
 &mt {
   quick-tap-ms = <100>;
-  global-quick-tap;
   flavor = "tap-preferred";
   tapping-term-ms = <200>;
 };
@@ -102,9 +103,9 @@
             #binding-cells = <2>;
             flavor = "tap-preferred";
             tapping-term-ms = <200>;
-            quick-tap-ms = <100>;
+            quick-tap-ms = <250>;
             require-prior-idle-ms = <125>;
-            bindings = <&kp>, <&m_s>;
+            bindings = <&kp>, <&mh_s>;
         };
 
         hmt_t: hold_tap_t {
@@ -112,9 +113,9 @@
             #binding-cells = <2>;
             flavor = "tap-preferred";
             tapping-term-ms = <200>;
-            quick-tap-ms = <100>;
+            quick-tap-ms = <250>;
             require-prior-idle-ms = <125>;
-            bindings = <&kp>, <&m_t>;
+            bindings = <&kp>, <&mh_t>;
         };
 
         hmt_r: hold_tap_r {
@@ -122,9 +123,9 @@
             #binding-cells = <2>;
             flavor = "tap-preferred";
             tapping-term-ms = <200>;
-            quick-tap-ms = <100>;
+            quick-tap-ms = <250>;
             require-prior-idle-ms = <125>;
-            bindings = <&kp>, <&m_r>;
+            bindings = <&kp>, <&mh_r>;
         };
 
         hmt_d: hold_tap_d {
@@ -132,9 +133,9 @@
             #binding-cells = <2>;
             flavor = "tap-preferred";
             tapping-term-ms = <200>;
-            quick-tap-ms = <100>;
+            quick-tap-ms = <250>;
             require-prior-idle-ms = <125>;
-            bindings = <&kp>, <&m_d>;
+            bindings = <&kp>, <&mh_d>;
         };
 
         hmt_k: hold_tap_k {
@@ -142,9 +143,9 @@
             #binding-cells = <2>;
             flavor = "tap-preferred";
             tapping-term-ms = <200>;
-            quick-tap-ms = <100>;
+            quick-tap-ms = <250>;
             require-prior-idle-ms = <125>;
-            bindings = <&kp>, <&m_k>;
+            bindings = <&kp>, <&mh_k>;
         };
 
         hmt_j: hold_tap_j {
@@ -152,9 +153,9 @@
             #binding-cells = <2>;
             flavor = "tap-preferred";
             tapping-term-ms = <200>;
-            quick-tap-ms = <100>;
+            quick-tap-ms = <250>;
             require-prior-idle-ms = <125>;
-            bindings = <&kp>, <&m_j>;
+            bindings = <&kp>, <&mh_j>;
         };
 
         hmt_g: hold_tap_g {
@@ -162,9 +163,9 @@
             #binding-cells = <2>;
             flavor = "tap-preferred";
             tapping-term-ms = <200>;
-            quick-tap-ms = <100>;
+            quick-tap-ms = <250>;
             require-prior-idle-ms = <125>;
-            bindings = <&kp>, <&m_g>;
+            bindings = <&kp>, <&mh_g>;
         };
 
         hmt_n: hold_tap_n {
@@ -172,9 +173,9 @@
             #binding-cells = <2>;
             flavor = "tap-preferred";
             tapping-term-ms = <200>;
-            quick-tap-ms = <100>;
+            quick-tap-ms = <250>;
             require-prior-idle-ms = <125>;
-            bindings = <&kp>, <&m_n>;
+            bindings = <&kp>, <&mh_n>;
         };
 
         hmt_e: hold_tap_e {
@@ -182,9 +183,9 @@
             #binding-cells = <2>;
             flavor = "tap-preferred";
             tapping-term-ms = <200>;
-            quick-tap-ms = <100>;
+            quick-tap-ms = <250>;
             require-prior-idle-ms = <125>;
-            bindings = <&kp>, <&m_e>;
+            bindings = <&kp>, <&mh_e>;
         };
 
         hmt_a: hold_tap_a {
@@ -192,9 +193,69 @@
             #binding-cells = <2>;
             flavor = "tap-preferred";
             tapping-term-ms = <200>;
-            quick-tap-ms = <100>;
+            quick-tap-ms = <250>;
             require-prior-idle-ms = <125>;
-            bindings = <&kp>, <&m_a>;
+            bindings = <&kp>, <&mh_a>;
+        };
+
+        hmt_x: hold_tap_x {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "tap-preferred";
+            tapping-term-ms = <200>;
+            quick-tap-ms = <250>;
+            require-prior-idle-ms = <125>;
+            bindings = <&kp>, <&hold_x>;
+        };
+
+        hmt_h: hold_tap_h {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "tap-preferred";
+            tapping-term-ms = <200>;
+            quick-tap-ms = <250>;
+            require-prior-idle-ms = <125>;
+            bindings = <&kp>, <&hold_h>;
+        };
+
+        hmt_i: hold_tap_i {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "tap-preferred";
+            tapping-term-ms = <200>;
+            quick-tap-ms = <250>;
+            require-prior-idle-ms = <125>;
+            bindings = <&kp>, <&hold_i>;
+        };
+
+        hmt_comma: hold_tap_comma {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "tap-preferred";
+            tapping-term-ms = <200>;
+            quick-tap-ms = <250>;
+            require-prior-idle-ms = <125>;
+            bindings = <&kp>, <&hold_comma>;
+        };
+
+        hmt_dot: hold_tap_dot {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "tap-preferred";
+            tapping-term-ms = <200>;
+            quick-tap-ms = <250>;
+            require-prior-idle-ms = <125>;
+            bindings = <&kp>, <&hold_dot>;
+        };
+
+        hmt_sqt: hold_tap_sqt {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "tap-preferred";
+            tapping-term-ms = <200>;
+            quick-tap-ms = <250>;
+            require-prior-idle-ms = <125>;
+            bindings = <&kp>, <&hold_sqt>;
         };
 
     };
@@ -291,6 +352,341 @@
     };
 
     macros {
+        // Holdable tap-side macros for mod-taps. These press the tap key on key-down,
+        // arm the Magic context layer, then release the tap key on key-up.
+        mh_a: magic_hold_a {
+            compatible = "zmk,behavior-macro-one-param";
+            #binding-cells = <1>;
+            wait-ms = <0>;
+            tap-ms = <5>;
+            bindings
+                = <&macro_press &kp A>
+                , <&macro_tap &sl MG_A>
+                , <&macro_pause_for_release>
+                , <&macro_release &kp A>
+                ;
+        };
+
+        mh_c: magic_hold_c {
+            compatible = "zmk,behavior-macro-one-param";
+            #binding-cells = <1>;
+            wait-ms = <0>;
+            tap-ms = <5>;
+            bindings
+                = <&macro_press &kp C>
+                , <&macro_tap &sl MG_C>
+                , <&macro_pause_for_release>
+                , <&macro_release &kp C>
+                ;
+        };
+
+        mh_d: magic_hold_d {
+            compatible = "zmk,behavior-macro-one-param";
+            #binding-cells = <1>;
+            wait-ms = <0>;
+            tap-ms = <5>;
+            bindings
+                = <&macro_press &kp D>
+                , <&macro_tap &sl MG_D>
+                , <&macro_pause_for_release>
+                , <&macro_release &kp D>
+                ;
+        };
+
+        mh_e: magic_hold_e {
+            compatible = "zmk,behavior-macro-one-param";
+            #binding-cells = <1>;
+            wait-ms = <0>;
+            tap-ms = <5>;
+            bindings
+                = <&macro_press &kp E>
+                , <&macro_tap &sl MG_E>
+                , <&macro_pause_for_release>
+                , <&macro_release &kp E>
+                ;
+        };
+
+        mh_f: magic_hold_f {
+            compatible = "zmk,behavior-macro-one-param";
+            #binding-cells = <1>;
+            wait-ms = <0>;
+            tap-ms = <5>;
+            bindings
+                = <&macro_press &kp F>
+                , <&macro_tap &sl MG_F>
+                , <&macro_pause_for_release>
+                , <&macro_release &kp F>
+                ;
+        };
+
+        mh_g: magic_hold_g {
+            compatible = "zmk,behavior-macro-one-param";
+            #binding-cells = <1>;
+            wait-ms = <0>;
+            tap-ms = <5>;
+            bindings
+                = <&macro_press &kp G>
+                , <&macro_tap &sl MG_G>
+                , <&macro_pause_for_release>
+                , <&macro_release &kp G>
+                ;
+        };
+
+        mh_j: magic_hold_j {
+            compatible = "zmk,behavior-macro-one-param";
+            #binding-cells = <1>;
+            wait-ms = <0>;
+            tap-ms = <5>;
+            bindings
+                = <&macro_press &kp J>
+                , <&macro_tap &sl MG_J>
+                , <&macro_pause_for_release>
+                , <&macro_release &kp J>
+                ;
+        };
+
+        mh_k: magic_hold_k {
+            compatible = "zmk,behavior-macro-one-param";
+            #binding-cells = <1>;
+            wait-ms = <0>;
+            tap-ms = <5>;
+            bindings
+                = <&macro_press &kp K>
+                , <&macro_tap &sl MG_K>
+                , <&macro_pause_for_release>
+                , <&macro_release &kp K>
+                ;
+        };
+
+        mh_l: magic_hold_l {
+            compatible = "zmk,behavior-macro-one-param";
+            #binding-cells = <1>;
+            wait-ms = <0>;
+            tap-ms = <5>;
+            bindings
+                = <&macro_press &kp L>
+                , <&macro_tap &sl MG_L>
+                , <&macro_pause_for_release>
+                , <&macro_release &kp L>
+                ;
+        };
+
+        mh_n: magic_hold_n {
+            compatible = "zmk,behavior-macro-one-param";
+            #binding-cells = <1>;
+            wait-ms = <0>;
+            tap-ms = <5>;
+            bindings
+                = <&macro_press &kp N>
+                , <&macro_tap &sl MG_N>
+                , <&macro_pause_for_release>
+                , <&macro_release &kp N>
+                ;
+        };
+
+        mh_o: magic_hold_o {
+            compatible = "zmk,behavior-macro-one-param";
+            #binding-cells = <1>;
+            wait-ms = <0>;
+            tap-ms = <5>;
+            bindings
+                = <&macro_press &kp O>
+                , <&macro_tap &sl MG_O>
+                , <&macro_pause_for_release>
+                , <&macro_release &kp O>
+                ;
+        };
+
+        mh_p: magic_hold_p {
+            compatible = "zmk,behavior-macro-one-param";
+            #binding-cells = <1>;
+            wait-ms = <0>;
+            tap-ms = <5>;
+            bindings
+                = <&macro_press &kp P>
+                , <&macro_tap &sl MG_P>
+                , <&macro_pause_for_release>
+                , <&macro_release &kp P>
+                ;
+        };
+
+        mh_q: magic_hold_q {
+            compatible = "zmk,behavior-macro-one-param";
+            #binding-cells = <1>;
+            wait-ms = <0>;
+            tap-ms = <5>;
+            bindings
+                = <&macro_press &kp Q>
+                , <&macro_tap &sl MG_Q>
+                , <&macro_pause_for_release>
+                , <&macro_release &kp Q>
+                ;
+        };
+
+        mh_r: magic_hold_r {
+            compatible = "zmk,behavior-macro-one-param";
+            #binding-cells = <1>;
+            wait-ms = <0>;
+            tap-ms = <5>;
+            bindings
+                = <&macro_press &kp R>
+                , <&macro_tap &sl MG_R>
+                , <&macro_pause_for_release>
+                , <&macro_release &kp R>
+                ;
+        };
+
+        mh_s: magic_hold_s {
+            compatible = "zmk,behavior-macro-one-param";
+            #binding-cells = <1>;
+            wait-ms = <0>;
+            tap-ms = <5>;
+            bindings
+                = <&macro_press &kp S>
+                , <&macro_tap &sl MG_S>
+                , <&macro_pause_for_release>
+                , <&macro_release &kp S>
+                ;
+        };
+
+        mh_t: magic_hold_t {
+            compatible = "zmk,behavior-macro-one-param";
+            #binding-cells = <1>;
+            wait-ms = <0>;
+            tap-ms = <5>;
+            bindings
+                = <&macro_press &kp T>
+                , <&macro_tap &sl MG_T>
+                , <&macro_pause_for_release>
+                , <&macro_release &kp T>
+                ;
+        };
+
+        mh_u: magic_hold_u {
+            compatible = "zmk,behavior-macro-one-param";
+            #binding-cells = <1>;
+            wait-ms = <0>;
+            tap-ms = <5>;
+            bindings
+                = <&macro_press &kp U>
+                , <&macro_tap &sl MG_U>
+                , <&macro_pause_for_release>
+                , <&macro_release &kp U>
+                ;
+        };
+
+        mh_v: magic_hold_v {
+            compatible = "zmk,behavior-macro-one-param";
+            #binding-cells = <1>;
+            wait-ms = <0>;
+            tap-ms = <5>;
+            bindings
+                = <&macro_press &kp V>
+                , <&macro_tap &sl MG_V>
+                , <&macro_pause_for_release>
+                , <&macro_release &kp V>
+                ;
+        };
+
+        mh_w: magic_hold_w {
+            compatible = "zmk,behavior-macro-one-param";
+            #binding-cells = <1>;
+            wait-ms = <0>;
+            tap-ms = <5>;
+            bindings
+                = <&macro_press &kp W>
+                , <&macro_tap &sl MG_W>
+                , <&macro_pause_for_release>
+                , <&macro_release &kp W>
+                ;
+        };
+
+        mh_y: magic_hold_y {
+            compatible = "zmk,behavior-macro-one-param";
+            #binding-cells = <1>;
+            wait-ms = <0>;
+            tap-ms = <5>;
+            bindings
+                = <&macro_press &kp Y>
+                , <&macro_tap &sl MG_Y>
+                , <&macro_pause_for_release>
+                , <&macro_release &kp Y>
+                ;
+        };
+
+        // Holdable tap-side macros for mod-taps that do not need Magic context tracking.
+        hold_x: hold_x {
+            compatible = "zmk,behavior-macro-one-param";
+            #binding-cells = <1>;
+            wait-ms = <0>;
+            tap-ms = <5>;
+            bindings
+                = <&macro_press &kp X>
+                , <&macro_pause_for_release>
+                , <&macro_release &kp X>
+                ;
+        };
+
+        hold_h: hold_h {
+            compatible = "zmk,behavior-macro-one-param";
+            #binding-cells = <1>;
+            wait-ms = <0>;
+            tap-ms = <5>;
+            bindings
+                = <&macro_press &kp H>
+                , <&macro_pause_for_release>
+                , <&macro_release &kp H>
+                ;
+        };
+
+        hold_i: hold_i {
+            compatible = "zmk,behavior-macro-one-param";
+            #binding-cells = <1>;
+            wait-ms = <0>;
+            tap-ms = <5>;
+            bindings
+                = <&macro_press &kp I>
+                , <&macro_pause_for_release>
+                , <&macro_release &kp I>
+                ;
+        };
+
+        hold_comma: hold_comma {
+            compatible = "zmk,behavior-macro-one-param";
+            #binding-cells = <1>;
+            wait-ms = <0>;
+            tap-ms = <5>;
+            bindings
+                = <&macro_press &kp COMMA>
+                , <&macro_pause_for_release>
+                , <&macro_release &kp COMMA>
+                ;
+        };
+
+        hold_dot: hold_dot {
+            compatible = "zmk,behavior-macro-one-param";
+            #binding-cells = <1>;
+            wait-ms = <0>;
+            tap-ms = <5>;
+            bindings
+                = <&macro_press &kp DOT>
+                , <&macro_pause_for_release>
+                , <&macro_release &kp DOT>
+                ;
+        };
+
+        hold_sqt: hold_sqt {
+            compatible = "zmk,behavior-macro-one-param";
+            #binding-cells = <1>;
+            wait-ms = <0>;
+            tap-ms = <5>;
+            bindings
+                = <&macro_press &kp SQT>
+                , <&macro_pause_for_release>
+                , <&macro_release &kp SQT>
+                ;
+        };
+
         m_a: magic_context_a {
             compatible = "zmk,behavior-macro-one-param";
             #binding-cells = <1>;
@@ -532,8 +928,8 @@
             // Magic Sturdy core + extra pinky ESC/ENTER
             bindings = <
                 &m_v 0              &kp M               &m_l 0              &m_c 0              &m_p 0              &kp B               &none               &m_u 0              &m_o 0              &m_q 0
-                &hmt_s LGUI 0       &hmt_t LALT 0       &hmt_r LCTRL 0      &hmt_d LSHFT 0      &m_y 0              &m_f 0              &hmt_n RSHFT 0      &hmt_e RCTRL 0      &hmt_a LALT 0       &mt RGUI I
-                &kp ESC             &mt LSHFT X         &hmt_k LCTRL 0      &hmt_j LALT 0       &hmt_g LGUI 0       &m_w 0              &kp Z               &mt RGUI H          &mt LALT COMMA      &mt RCTRL DOT       &mt RSHFT SQT       &kp RET
+                &hmt_s LGUI 0       &hmt_t LALT 0       &hmt_r LCTRL 0      &hmt_d LSHFT 0      &m_y 0              &m_f 0              &hmt_n RSHFT 0      &hmt_e RCTRL 0      &hmt_a LALT 0       &hmt_i RGUI 0
+                &kp ESC             &hmt_x LSHFT 0         &hmt_k LCTRL 0      &hmt_j LALT 0       &hmt_g LGUI 0       &m_w 0              &kp Z               &hmt_h RGUI 0          &hmt_comma LALT 0      &hmt_dot RCTRL 0       &hmt_sqt RSHFT 0       &kp RET
                 &sym_cbspc SYM LC(BSPC)  &lt NAV SPACE       &lt FLIP TAB        &none               &bspc_rsft RSHFT BSPC  &ralt_rep RALT 0
             >;
         };
@@ -563,8 +959,8 @@
             // Mostly copied from Cheapino FLIP; adaptive Magic at this left-hand position does nothing unless context layer maps it
             bindings = <
                 &m_q 0              &m_o 0              &m_u 0              &none               &kp B               &kp INS             &kp CAPS            &kp KP_NUM          &kp SLCK            &kp PAUSE_BREAK
-                &mt RGUI I          &hmt_a LALT 0       &hmt_e RCTRL 0      &hmt_n RSHFT 0      &m_f 0              &trans              &trans              &trans              &trans              &trans
-                &trans              &mt RSHFT SQT       &mt RCTRL DOT       &mt LALT COMMA      &mt RGUI H          &kp Z               &trans              &trans              &trans              &trans              &trans              &trans
+                &hmt_i RGUI 0          &hmt_a LALT 0       &hmt_e RCTRL 0      &hmt_n RSHFT 0      &m_f 0              &trans              &trans              &trans              &trans              &trans
+                &trans              &hmt_sqt RSHFT 0       &hmt_dot RCTRL 0       &hmt_comma LALT 0      &hmt_h RGUI 0          &kp Z               &trans              &trans              &trans              &trans              &trans              &trans
                 &trans              &trans              &trans              &trans              &trans              &trans
             >;
         };
