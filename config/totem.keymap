@@ -6,11 +6,11 @@
 //  - Extra right pinky = ENTER
 //  - Esc combos and right-hand Enter combo removed
 //  - Left-hand Enter combo preserved
-//  - QMK adaptive Magic is emulated with sticky context layers and macros
-//  - Magic_1/Magic_2 now do nothing when no adaptive rule exists, instead of repeating
-//  - Home-row mod-taps use require-prior-idle-ms to reduce Magic/context delay while typing
-//  - v8: rolled back v7 holdable macro tap-sides because they could leave keys pressed
-//  - v8: removed global-quick-tap and raised quick-tap-ms on plain &mt keys for safer tap-hold repeat
+//  - QMK adaptive Magic is still emulated with sticky context layers and macros where safe
+//  - Magic_1/Magic_2 do nothing when no adaptive rule exists, instead of repeating
+//  - v9: stability-first rollback of Magic-aware HRM tap-sides
+//  - v9: STRD / KJG / NEAI use native &mt again so tap-hold-repeat works and stuck macro taps are avoided
+//  - v9 caveat: HRM letters no longer update Magic context in keymap-only ZMK
 //  - Exact QMK custom timing for DF_REPEAT / DF_BSPC cannot be 1:1 in keymap-only ZMK
 //
 
@@ -49,8 +49,9 @@
 
 &mt {
   quick-tap-ms = <250>;
+  global-quick-tap;
   flavor = "tap-preferred";
-  tapping-term-ms = <200>;
+  tapping-term-ms = <170>;
 };
 
 &lt {
@@ -104,7 +105,6 @@
             flavor = "tap-preferred";
             tapping-term-ms = <200>;
             quick-tap-ms = <250>;
-            require-prior-idle-ms = <125>;
             bindings = <&kp>, <&m_s>;
         };
 
@@ -114,7 +114,6 @@
             flavor = "tap-preferred";
             tapping-term-ms = <200>;
             quick-tap-ms = <250>;
-            require-prior-idle-ms = <125>;
             bindings = <&kp>, <&m_t>;
         };
 
@@ -124,7 +123,6 @@
             flavor = "tap-preferred";
             tapping-term-ms = <200>;
             quick-tap-ms = <250>;
-            require-prior-idle-ms = <125>;
             bindings = <&kp>, <&m_r>;
         };
 
@@ -134,7 +132,6 @@
             flavor = "tap-preferred";
             tapping-term-ms = <200>;
             quick-tap-ms = <250>;
-            require-prior-idle-ms = <125>;
             bindings = <&kp>, <&m_d>;
         };
 
@@ -144,7 +141,6 @@
             flavor = "tap-preferred";
             tapping-term-ms = <200>;
             quick-tap-ms = <250>;
-            require-prior-idle-ms = <125>;
             bindings = <&kp>, <&m_k>;
         };
 
@@ -154,7 +150,6 @@
             flavor = "tap-preferred";
             tapping-term-ms = <200>;
             quick-tap-ms = <250>;
-            require-prior-idle-ms = <125>;
             bindings = <&kp>, <&m_j>;
         };
 
@@ -164,7 +159,6 @@
             flavor = "tap-preferred";
             tapping-term-ms = <200>;
             quick-tap-ms = <250>;
-            require-prior-idle-ms = <125>;
             bindings = <&kp>, <&m_g>;
         };
 
@@ -174,7 +168,6 @@
             flavor = "tap-preferred";
             tapping-term-ms = <200>;
             quick-tap-ms = <250>;
-            require-prior-idle-ms = <125>;
             bindings = <&kp>, <&m_n>;
         };
 
@@ -184,7 +177,6 @@
             flavor = "tap-preferred";
             tapping-term-ms = <200>;
             quick-tap-ms = <250>;
-            require-prior-idle-ms = <125>;
             bindings = <&kp>, <&m_e>;
         };
 
@@ -194,7 +186,6 @@
             flavor = "tap-preferred";
             tapping-term-ms = <200>;
             quick-tap-ms = <250>;
-            require-prior-idle-ms = <125>;
             bindings = <&kp>, <&m_a>;
         };
 
@@ -531,10 +522,11 @@
         base_layer {
             label = "BASE";
             // Magic Sturdy core + extra pinky ESC/ENTER
+            // HRM alphas are native &mt for stable key release and tap-hold-repeat.
             bindings = <
                 &m_v 0              &kp M               &m_l 0              &m_c 0              &m_p 0              &kp B               &none               &m_u 0              &m_o 0              &m_q 0
-                &hmt_s LGUI 0       &hmt_t LALT 0       &hmt_r LCTRL 0      &hmt_d LSHFT 0      &m_y 0              &m_f 0              &hmt_n RSHFT 0      &hmt_e RCTRL 0      &hmt_a LALT 0       &mt RGUI I
-                &kp ESC             &mt LSHFT X         &hmt_k LCTRL 0      &hmt_j LALT 0       &hmt_g LGUI 0       &m_w 0              &kp Z               &mt RGUI H          &mt LALT COMMA      &mt RCTRL DOT       &mt RSHFT SQT       &kp RET
+                &mt LGUI S       &mt LALT T       &mt LCTRL R      &mt LSHFT D      &m_y 0              &m_f 0              &mt RSHFT N      &mt RCTRL E      &mt LALT A       &mt RGUI I
+                &kp ESC             &mt LSHFT X         &mt LCTRL K      &mt LALT J       &mt LGUI G       &m_w 0              &kp Z               &mt RGUI H          &mt LALT COMMA      &mt RCTRL DOT       &mt RSHFT SQT       &kp RET
                 &sym_cbspc SYM LC(BSPC)  &lt NAV SPACE       &lt FLIP TAB        &none               &bspc_rsft RSHFT BSPC  &ralt_rep RALT 0
             >;
         };
@@ -564,7 +556,7 @@
             // Mostly copied from Cheapino FLIP; adaptive Magic at this left-hand position does nothing unless context layer maps it
             bindings = <
                 &m_q 0              &m_o 0              &m_u 0              &none               &kp B               &kp INS             &kp CAPS            &kp KP_NUM          &kp SLCK            &kp PAUSE_BREAK
-                &mt RGUI I          &hmt_a LALT 0       &hmt_e RCTRL 0      &hmt_n RSHFT 0      &m_f 0              &trans              &trans              &trans              &trans              &trans
+                &mt RGUI I          &mt LALT A       &mt RCTRL E      &mt RSHFT N      &m_f 0              &trans              &trans              &trans              &trans              &trans
                 &trans              &mt RSHFT SQT       &mt RCTRL DOT       &mt LALT COMMA      &mt RGUI H          &kp Z               &trans              &trans              &trans              &trans              &trans              &trans
                 &trans              &trans              &trans              &trans              &trans              &trans
             >;
