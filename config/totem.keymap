@@ -8,6 +8,7 @@
 //  - Left-hand Enter combo preserved
 //  - QMK adaptive Magic is emulated with sticky context layers and macros
 //  - Magic_1/Magic_2 now do nothing when no adaptive rule exists, instead of repeating
+//  - Home-row mod-taps use require-prior-idle-ms to reduce Magic/context delay while typing
 //  - Exact QMK custom timing for DF_REPEAT / DF_BSPC cannot be 1:1 in keymap-only ZMK
 //
 
@@ -102,6 +103,7 @@
             flavor = "tap-preferred";
             tapping-term-ms = <200>;
             quick-tap-ms = <100>;
+            require-prior-idle-ms = <125>;
             bindings = <&kp>, <&m_s>;
         };
 
@@ -111,6 +113,7 @@
             flavor = "tap-preferred";
             tapping-term-ms = <200>;
             quick-tap-ms = <100>;
+            require-prior-idle-ms = <125>;
             bindings = <&kp>, <&m_t>;
         };
 
@@ -120,6 +123,7 @@
             flavor = "tap-preferred";
             tapping-term-ms = <200>;
             quick-tap-ms = <100>;
+            require-prior-idle-ms = <125>;
             bindings = <&kp>, <&m_r>;
         };
 
@@ -129,6 +133,7 @@
             flavor = "tap-preferred";
             tapping-term-ms = <200>;
             quick-tap-ms = <100>;
+            require-prior-idle-ms = <125>;
             bindings = <&kp>, <&m_d>;
         };
 
@@ -138,6 +143,7 @@
             flavor = "tap-preferred";
             tapping-term-ms = <200>;
             quick-tap-ms = <100>;
+            require-prior-idle-ms = <125>;
             bindings = <&kp>, <&m_k>;
         };
 
@@ -147,6 +153,7 @@
             flavor = "tap-preferred";
             tapping-term-ms = <200>;
             quick-tap-ms = <100>;
+            require-prior-idle-ms = <125>;
             bindings = <&kp>, <&m_j>;
         };
 
@@ -156,6 +163,7 @@
             flavor = "tap-preferred";
             tapping-term-ms = <200>;
             quick-tap-ms = <100>;
+            require-prior-idle-ms = <125>;
             bindings = <&kp>, <&m_g>;
         };
 
@@ -165,6 +173,7 @@
             flavor = "tap-preferred";
             tapping-term-ms = <200>;
             quick-tap-ms = <100>;
+            require-prior-idle-ms = <125>;
             bindings = <&kp>, <&m_n>;
         };
 
@@ -174,6 +183,7 @@
             flavor = "tap-preferred";
             tapping-term-ms = <200>;
             quick-tap-ms = <100>;
+            require-prior-idle-ms = <125>;
             bindings = <&kp>, <&m_e>;
         };
 
@@ -183,6 +193,7 @@
             flavor = "tap-preferred";
             tapping-term-ms = <200>;
             quick-tap-ms = <100>;
+            require-prior-idle-ms = <125>;
             bindings = <&kp>, <&m_a>;
         };
 
